@@ -1,22 +1,5 @@
-/**
- * predictionGroups.ts
- *
- * Manually curated group definitions for Operation Epic Fury prediction markets.
- * This is a placeholder until LLM-based classification is wired up.
- * When the agent pipeline is ready, replace `titleMatches` with stored
- * { marketId → groupId } assignments from the backend.
- */
-
-export interface MarketGroup {
-  id: string;
-  label: string;
-  description: string;
-  color: string;
-  bg: string;
-  border: string;
-  /** Lowercased substrings to match against market titles (temporary heuristic) */
-  titleMatches: string[];
-}
+import type { MarketGroup } from '@/types/domain';
+export type { MarketGroup };
 
 export const MARKET_GROUPS: MarketGroup[] = [
   {

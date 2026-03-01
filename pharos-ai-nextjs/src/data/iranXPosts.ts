@@ -1,30 +1,5 @@
-/**
- * X (Twitter) Signal posts — Operation Epic Fury / Roaring Lion
- * Based on real reporting patterns: Reuters, CENTCOM, IDF, ISW, OSINTdefender
- * All timestamps UTC, Feb 28–Mar 1 2026
- */
-
-export interface XPost {
-  id: string;
-  handle: string;
-  displayName: string;
-  avatar: string;           // 2-char initials
-  avatarColor: string;
-  verified: boolean;
-  accountType: 'military' | 'government' | 'journalist' | 'analyst' | 'official';
-  significance: 'BREAKING' | 'HIGH' | 'STANDARD';
-  timestamp: string;        // ISO 8601
-  content: string;
-  images?: string[];
-  videoThumb?: string;
-  likes: number;
-  retweets: number;
-  replies: number;
-  views: number;
-  eventId?: string;         // links to iranEvents evt-xxx
-  actorId?: string;         // links to iranActors id
-  pharosNote?: string;      // '⚠️ ' prefix = warning
-}
+import type { XPost } from '@/types/domain';
+export type { XPost };
 
 export function fmt(n: number): string {
   if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';

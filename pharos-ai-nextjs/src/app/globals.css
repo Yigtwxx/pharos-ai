@@ -34,13 +34,15 @@
   --warning:   #EC9A3C;   /* HIGH */
   --success:   #23A26D;   /* verified / active */
   --info:      #4C90F0;   /* ELEVATED */
-  --cyber:     #A28BE0;   /* CYBER ops */
+  --cyber:     #A28BE0;   /* CYBER ops / NATO */
+  --teal:      #32C8C8;   /* Israel (IDF) / naval */
 
   /* Dim variants for backgrounds */
   --danger-dim:  rgba(231, 106, 110, 0.12);
   --warning-dim: rgba(236, 154, 60,  0.12);
   --success-dim: rgba(35,  162, 109, 0.12);
   --info-dim:    rgba(76,  144, 240, 0.12);
+  --teal-dim:    rgba(50,  200, 200, 0.12);
 }
 
 /* ── shadcn/Tailwind CSS-var bridge ── */
@@ -152,6 +154,7 @@ body {
 .dot-info    { background: var(--info);    }
 .dot-success { background: var(--success); }
 .dot-cyber   { background: var(--cyber);   }
+.dot-teal    { background: var(--teal);    }
 .dot-live    { background: var(--danger); box-shadow: 0 0 5px var(--danger); }
 
 /* ── Severity pills ── */

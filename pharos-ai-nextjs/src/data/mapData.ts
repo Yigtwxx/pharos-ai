@@ -1,51 +1,5 @@
-export interface StrikeArc {
-  id: string;
-  from: [number, number]; // [lon, lat]
-  to: [number, number];
-  label: string;
-  type: 'US_STRIKE' | 'ISRAEL_STRIKE' | 'NAVAL';
-  severity: 'CRITICAL' | 'HIGH';
-}
-
-export interface MissileTrack {
-  id: string;
-  from: [number, number];
-  to: [number, number];
-  label: string;
-  intercepted: boolean;
-  severity: 'CRITICAL' | 'HIGH';
-}
-
-export interface Target {
-  id: string;
-  name: string;
-  position: [number, number]; // [lon, lat]
-  type: 'NUCLEAR' | 'MILITARY' | 'NAVAL' | 'INFRASTRUCTURE';
-  status: 'DESTROYED' | 'DAMAGED' | 'TARGETED';
-  description: string;
-}
-
-export interface Asset {
-  id: string;
-  name: string;
-  position: [number, number];
-  type: 'CARRIER' | 'AFB' | 'NAVAL_BASE' | 'ARMY_BASE';
-  nation: 'US' | 'ISRAEL' | 'NATO';
-  description?: string;
-}
-
-export interface ThreatZone {
-  id: string;
-  name: string;
-  coordinates: [number, number][];
-  type: 'CLOSURE' | 'PATROL' | 'NFZ' | 'THREAT';
-  color: [number, number, number, number];
-}
-
-export interface HeatPoint {
-  position: [number, number];
-  weight: number;
-}
+import type { StrikeArc, MissileTrack, Target, Asset, ThreatZone, HeatPoint } from '@/types/domain';
+export type { StrikeArc, MissileTrack, Target, Asset, ThreatZone, HeatPoint };
 
 export const STRIKE_ARCS: StrikeArc[] = [
   { id: 's1', from: [72.4232, -7.3195], to: [50.5719, 34.8846], label: 'B-2 Strike: Diego Garcia → Fordow', type: 'US_STRIKE', severity: 'CRITICAL' },

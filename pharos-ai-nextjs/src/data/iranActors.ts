@@ -1,33 +1,5 @@
-// Real actors from Operation Epic Fury
-// Sources: Reuters, ISW/CTP, Wikipedia
-
-export type ActivityLevel = 'CRITICAL' | 'HIGH' | 'ELEVATED' | 'MODERATE';
-export type Stance = 'AGGRESSOR' | 'DEFENDER' | 'RETALIATING' | 'PROXY' | 'NEUTRAL' | 'CONDEMNING';
-
-export interface RecentAction {
-  date: string; // ISO date
-  type: 'MILITARY' | 'DIPLOMATIC' | 'POLITICAL' | 'ECONOMIC' | 'INTELLIGENCE';
-  description: string;
-  verified: boolean;
-  significance: 'HIGH' | 'MEDIUM' | 'LOW';
-}
-
-export interface Actor {
-  id: string;
-  name: string;
-  fullName: string;
-  countryCode?: string;
-  type: 'STATE' | 'NON-STATE' | 'ORGANIZATION' | 'INDIVIDUAL';
-  activityLevel: ActivityLevel;
-  activityScore: number; // 0-100
-  stance: Stance;
-  saying: string;        // official public position
-  doing: string[];       // verified observed actions
-  assessment: string;    // Pharos analytical assessment
-  recentActions: RecentAction[];
-  keyFigures: string[];
-  linkedEventIds: string[];
-}
+import type { ActivityLevel, Stance, RecentAction, Actor } from '@/types/domain';
+export type { ActivityLevel, Stance, RecentAction, Actor };
 
 export const ACTORS: Actor[] = [
   {

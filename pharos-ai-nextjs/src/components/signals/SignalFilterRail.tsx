@@ -2,8 +2,8 @@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { FilterBlock, CheckboxRow, ToggleRow } from '@/components/shared/FilterControls';
 
-export type Significance = 'BREAKING' | 'HIGH' | 'STANDARD';
-export type AccountType  = 'military' | 'government' | 'journalist' | 'analyst' | 'official';
+import type { Significance, AccountType } from '@/types/domain';
+export type { Significance, AccountType };
 
 const SIG_LABELS: Significance[] = ['BREAKING', 'HIGH', 'STANDARD'];
 const ACCT_LABELS: AccountType[] = ['military', 'government', 'journalist', 'analyst'];

@@ -1,25 +1,5 @@
-export interface StoryEvent {
-  time: string;   // ISO timestamp
-  label: string;
-  type: 'STRIKE' | 'RETALIATION' | 'INTEL' | 'NAVAL' | 'POLITICAL';
-}
-
-export interface MapStory {
-  id: string;
-  title: string;
-  tagline: string;
-  iconName: string;       // lucide-react icon name
-  category: 'STRIKE' | 'RETALIATION' | 'NAVAL' | 'INTEL' | 'DIPLOMATIC';
-  narrative: string;
-  highlightStrikeIds: string[];
-  highlightMissileIds: string[];
-  highlightTargetIds: string[];
-  highlightAssetIds: string[];
-  viewState: { longitude: number; latitude: number; zoom: number };
-  keyFacts: string[];
-  timestamp: string;      // ISO — primary story moment (used on timeline)
-  events: StoryEvent[];   // chronological beats within this story
-}
+import type { StoryEvent, MapStory } from '@/types/domain';
+export type { StoryEvent, MapStory };
 
 export const MAP_STORIES: MapStory[] = [
   {

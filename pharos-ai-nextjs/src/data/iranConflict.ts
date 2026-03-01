@@ -1,8 +1,5 @@
-/**
- * OPERATION EPIC FURY / ROARING LION
- * US–Israel joint strike on Iran, February 28 – March 1, 2026
- * Source: Reuters, NYT, Guardian, ISW/CTP, CNBC, Wikipedia
- */
+import type { ThreatLevel, ConflictStatus } from '@/types/domain';
+export type { ThreatLevel, ConflictStatus };
 
 export const CONFLICT = {
   id:            'iran-2026',
@@ -47,5 +44,3 @@ export const CONFLICT = {
   },
 };
 
-export type ThreatLevel = 'CRITICAL' | 'HIGH' | 'ELEVATED' | 'MONITORING';
-export type ConflictStatus = 'ONGOING' | 'PAUSED' | 'CEASEFIRE' | 'RESOLVED';

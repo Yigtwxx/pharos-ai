@@ -1,41 +1,5 @@
-/**
- * Event timeline — Operation Epic Fury / Roaring Lion
- * Sources: Reuters, NYT, Guardian, ISW/CTP, CENTCOM, IDF, CNBC, Wikipedia
- * All times UTC
- */
-
-export type Severity = 'CRITICAL' | 'HIGH' | 'STANDARD';
-export type EventType = 'MILITARY' | 'DIPLOMATIC' | 'INTELLIGENCE' | 'ECONOMIC' | 'HUMANITARIAN' | 'POLITICAL';
-
-export interface Source {
-  name: string;
-  tier: 1 | 2 | 3;
-  reliability: number;
-  url?: string;
-}
-
-export interface ActorResponse {
-  actorId: string;
-  actorName: string;
-  stance: 'SUPPORTING' | 'OPPOSING' | 'NEUTRAL' | 'UNKNOWN';
-  type: string;
-  statement: string;
-}
-
-export interface IntelEvent {
-  id:             string;
-  timestamp:      string;
-  severity:       Severity;
-  type:           EventType;
-  title:          string;
-  location:       string;
-  summary:        string;
-  fullContent:    string;
-  verified:       boolean;
-  sources:        Source[];
-  actorResponses: ActorResponse[];
-  tags:           string[];
-}
+import type { Severity, EventType, Source, ActorResponse, IntelEvent } from '@/types/domain';
+export type { Severity, EventType, Source, ActorResponse, IntelEvent };
 
 export const EVENTS: IntelEvent[] = [
   {
