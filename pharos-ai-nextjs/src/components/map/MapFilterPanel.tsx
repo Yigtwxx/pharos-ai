@@ -1,11 +1,10 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { ChevronDown, ChevronUp, RotateCcw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 import {
-  ACTOR_META, PRIORITY_META, STATUS_META,
+  ACTOR_META, PRIORITY_META, STATUS_META, LAYER_DISPLAY,
   FRIENDLY_ACTORS, HOSTILE_ACTORS, ALL_PRIORITIES, ALL_STATUSES,
 } from '@/data/mapTokens';
 import { STRIKE_ARCS, MISSILE_TRACKS, TARGETS, ALLIED_ASSETS, THREAT_ZONES } from '@/data/mapData';
@@ -19,77 +18,74 @@ import type { FilterState, LayerName } from '@/hooks/use-map-filters';
 function useCounts() {
   return useMemo(() => {
     const all = [...STRIKE_ARCS, ...MISSILE_TRACKS, ...TARGETS, ...ALLIED_ASSETS, ...THREAT_ZONES];
-    const actor:    Partial<Record<Actor, number>>    = {};
-    const priority: Partial<Record<Priority, number>> = {};
+    const byActor:    Partial<Record<Actor, number>>    = {};
+    const byPriority: Partial<Record<Priority, number>> = {};
     for (const d of all) {
-      actor[d.actor]       = (actor[d.actor] ?? 0) + 1;
-      priority[d.priority] = (priority[d.priority] ?? 0) + 1;
+      byActor[d.actor]       = (byActor[d.actor] ?? 0) + 1;
+      byPriority[d.priority] = (byPriority[d.priority] ?? 0) + 1;
     }
-    const layers = {
-      strikes: STRIKE_ARCS.length, missiles: MISSILE_TRACKS.length,
-      targets: TARGETS.length, assets: ALLIED_ASSETS.length,
-      zones: THREAT_ZONES.length, heat: 1,
-    };
-    return { actor, priority, layers };
+    return { byActor, byPriority };
   }, []);
 }
 
-// ─── Chip atom ────────────────────────────────────────────────────────────────
+// ─── Level 1 layer button — matches the old toolbar style exactly ─────────────
 
-function Chip({ label, count, color, isOn, onClick }: {
-  label: string; count?: number; color?: string; isOn: boolean; onClick: () => void;
-}) {
-  const c = color ?? 'var(--t2)';
+function LayerBtn({ name, isOn, onClick }: { name: LayerName; isOn: boolean; onClick: () => void }) {
+  const m = LAYER_DISPLAY[name];
   return (
     <button onClick={onClick} className="mono" style={{
-      display:    'inline-flex', alignItems: 'center', gap: 4,
-      padding:    '3px 8px', borderRadius: 2, cursor: 'pointer', border: 'none',
-      background: isOn ? `color-mix(in srgb, ${c} 16%, transparent)` : 'var(--bg-app)',
-      outline:    `1px solid ${isOn ? `color-mix(in srgb, ${c} 40%, transparent)` : 'var(--bd-s)'}`,
-      color:      isOn ? c : 'var(--t4)',
-      fontSize:   9, fontWeight: 700, letterSpacing: '0.06em',
-      transition: 'all 0.1s',
+      padding:    '2px 7px',
+      borderRadius: 2,
+      fontSize:   8,
+      fontWeight: 700,
+      cursor:     'pointer',
+      border:     `1px solid ${isOn ? m.border : 'var(--bd)'}`,
+      background: isOn ? m.bg : 'var(--bg-1)',
+      color:      isOn ? m.color : 'var(--t4)',
+      whiteSpace: 'nowrap',
+      letterSpacing: '0.05em',
     }}>
-      {label}
-      {count !== undefined && (
-        <span style={{ fontSize: 8, opacity: 0.7, fontWeight: 400 }}>{count}</span>
-      )}
+      {LAYER_LABEL[name]}
     </button>
   );
 }
 
-// ─── Active filter summary bar ────────────────────────────────────────────────
+// ─── Chip for actor / priority / status ──────────────────────────────────────
 
-function ActiveBar({ state, onReset }: { state: FilterState; onReset: () => void }) {
-  const pills: { label: string; color: string }[] = [];
-  ALL_PRIORITIES.forEach(p => { if (!state.priorities.has(p)) return; if (state.priorities.size < 3) pills.push({ label: PRIORITY_META[p].label, color: PRIORITY_META[p].cssVar }); });
-  Object.keys(ACTOR_META).forEach(a => { if (state.actors.has(a as Actor) && state.actors.size < 6) pills.push({ label: a, color: ACTOR_META[a as Actor].cssVar }); });
-  if (!pills.length && state.layers.size === ALL_LAYERS.length) return null;
-
+function Chip({ label, count, color, isOn, onClick }: {
+  label: string; count?: number; color: string; isOn: boolean; onClick: () => void;
+}) {
   return (
-    <div className="flex items-center gap-1 flex-wrap" style={{ padding: '4px 8px', borderBottom: '1px solid var(--bd-s)', background: 'var(--blue-dim)' }}>
-      <span className="mono" style={{ fontSize: 8, color: 'var(--blue-l)', fontWeight: 700, marginRight: 2 }}>ACTIVE</span>
-      {pills.map(p => (
-        <span key={p.label} className="mono" style={{ fontSize: 8, fontWeight: 700, color: p.color, padding: '1px 5px', background: `color-mix(in srgb, ${p.color} 12%, transparent)`, borderRadius: 2 }}>{p.label}</span>
-      ))}
-      <button onClick={onReset} className="mono" style={{ marginLeft: 'auto', fontSize: 8, color: 'var(--t4)', background: 'none', border: 'none', cursor: 'pointer', padding: '0 2px' }}>
-        <RotateCcw size={8} strokeWidth={2.5} />
-      </button>
-    </div>
+    <button onClick={onClick} className="mono" style={{
+      padding:    '2px 7px', borderRadius: 2, cursor: 'pointer',
+      fontSize:   8, fontWeight: 700, letterSpacing: '0.05em',
+      border:     `1px solid ${isOn ? `color-mix(in srgb, ${color} 40%, transparent)` : 'var(--bd-s)'}`,
+      background: isOn ? `color-mix(in srgb, ${color} 14%, transparent)` : 'transparent',
+      color:      isOn ? color : 'var(--t4)',
+      display:    'inline-flex', alignItems: 'center', gap: 3,
+      whiteSpace: 'nowrap',
+    }}>
+      {label}
+      {count !== undefined && <span style={{ opacity: 0.6, fontWeight: 400, fontSize: 7 }}>{count}</span>}
+    </button>
   );
 }
 
-// ─── Level 2: Actor ───────────────────────────────────────────────────────────
+// ─── Level 2: Actor groups ────────────────────────────────────────────────────
 
-function ActorLevel({ actors, actorCounts, onToggle }: { actors: Set<Actor>; actorCounts: Partial<Record<Actor, number>>; onToggle: (a: Actor) => void }) {
+function ActorSection({ actors, counts, onToggle }: { actors: Set<Actor>; counts: Partial<Record<Actor, number>>; onToggle: (a: Actor) => void }) {
   return (
-    <div style={{ padding: '6px 8px', borderTop: '1px solid var(--bd-s)' }}>
-      <p className="label" style={{ color: 'var(--t4)', marginBottom: 4 }}>ACTOR</p>
+    <div style={{ padding: '8px 10px', borderTop: '1px solid var(--bd-s)' }}>
+      <p className="label" style={{ color: 'var(--t4)', marginBottom: 5 }}>ACTOR</p>
       <div className="flex flex-wrap gap-1 mb-1">
-        {FRIENDLY_ACTORS.map(a => <Chip key={a} label={ACTOR_META[a].label.split(' ')[0].toUpperCase()} count={actorCounts[a]} color={ACTOR_META[a].cssVar} isOn={actors.has(a)} onClick={() => onToggle(a)} />)}
+        {FRIENDLY_ACTORS.map(a => (
+          <Chip key={a} label={a} count={counts[a]} color={ACTOR_META[a].cssVar} isOn={actors.has(a)} onClick={() => onToggle(a)} />
+        ))}
       </div>
       <div className="flex flex-wrap gap-1">
-        {HOSTILE_ACTORS.map(a => <Chip key={a} label={a} count={actorCounts[a]} color={ACTOR_META[a].cssVar} isOn={actors.has(a)} onClick={() => onToggle(a)} />)}
+        {HOSTILE_ACTORS.map(a => (
+          <Chip key={a} label={a} count={counts[a]} color={ACTOR_META[a].cssVar} isOn={actors.has(a)} onClick={() => onToggle(a)} />
+        ))}
       </div>
     </div>
   );
@@ -97,32 +93,33 @@ function ActorLevel({ actors, actorCounts, onToggle }: { actors: Set<Actor>; act
 
 // ─── Level 3: Priority + Status ──────────────────────────────────────────────
 
-function PriorityLevel({ priorities, statuses, priorityCounts, onTogglePriority, onToggleStatus }: {
+function PrioritySection({ priorities, statuses, priorityCounts, onTogglePriority, onToggleStatus }: {
   priorities: Set<Priority>; statuses: Set<MarkerStatus>;
   priorityCounts: Partial<Record<Priority, number>>;
   onTogglePriority: (p: Priority) => void; onToggleStatus: (s: MarkerStatus) => void;
 }) {
   return (
-    <div style={{ padding: '6px 8px', borderTop: '1px solid var(--bd-s)' }}>
-      <p className="label" style={{ color: 'var(--t4)', marginBottom: 4 }}>PRIORITY</p>
-      <div className="flex flex-wrap gap-1 mb-2">
+    <div style={{ padding: '8px 10px', borderTop: '1px solid var(--bd-s)' }}>
+      <p className="label" style={{ color: 'var(--t4)', marginBottom: 5 }}>PRIORITY</p>
+      <div className="flex flex-wrap gap-1 mb-3">
         {ALL_PRIORITIES.map(p => (
-          <Chip key={p} label={`${p} · ${PRIORITY_META[p].description.split(' — ')[0].toUpperCase()}`}
+          <Chip key={p} label={`${p} — ${PRIORITY_META[p].description.split(' — ')[0]}`}
             count={priorityCounts[p]} color={PRIORITY_META[p].cssVar}
             isOn={priorities.has(p)} onClick={() => onTogglePriority(p)} />
         ))}
       </div>
-      <p className="label" style={{ color: 'var(--t4)', marginBottom: 4 }}>STATUS</p>
+      <p className="label" style={{ color: 'var(--t4)', marginBottom: 5 }}>STATUS</p>
       <div className="flex flex-wrap gap-1">
         {ALL_STATUSES.map(s => (
-          <Chip key={s} label={STATUS_META[s].label.toUpperCase()} color={STATUS_META[s].cssVar} isOn={statuses.has(s)} onClick={() => onToggleStatus(s)} />
+          <Chip key={s} label={STATUS_META[s].label} color={STATUS_META[s].cssVar}
+            isOn={statuses.has(s)} onClick={() => onToggleStatus(s)} />
         ))}
       </div>
     </div>
   );
 }
 
-// ─── Main panel ───────────────────────────────────────────────────────────────
+// ─── Main component ───────────────────────────────────────────────────────────
 
 type Props = FilterState & {
   onToggleLayer:    (l: LayerName) => void;
@@ -134,52 +131,88 @@ type Props = FilterState & {
 };
 
 export default function MapFilterPanel(props: Props) {
-  const { layers, actors, priorities, statuses, isFiltered, onToggleLayer, onToggleActor, onTogglePriority, onToggleStatus, onReset } = props;
-  const [level, setLevel] = useState(1);   // 1, 2, or 3
+  const { layers, actors, priorities, statuses, isFiltered } = props;
+  const { onToggleLayer, onToggleActor, onTogglePriority, onToggleStatus, onReset } = props;
+  const [level, setLevel] = useState(1);
   const counts = useCounts();
 
-  const ExpandBtn = ({ target }: { target: number }) => (
-    <Button variant="ghost" size="sm" onClick={() => setLevel(l => l === target ? target - 1 : target)}
-      className="h-5 w-5 p-0 ml-auto" style={{ color: level >= target ? 'var(--blue-l)' : 'var(--t4)' }}>
-      {level >= target ? <ChevronUp size={10} strokeWidth={2.5} /> : <ChevronDown size={10} strokeWidth={2.5} />}
-    </Button>
-  );
+  const hasDeepFilter =
+    actors.size < 6 || priorities.size < 3 || statuses.size < ALL_STATUSES.length;
 
   return (
-    <div style={{ background: 'rgba(28,33,39,0.97)', border: '1px solid var(--bd)', borderRadius: 2, minWidth: 240, maxWidth: 300 }}>
+    <div className="flex flex-col" style={{ alignItems: 'flex-end', gap: 4 }}>
 
-      {/* Active filter bar */}
-      <ActiveBar state={props} onReset={onReset} />
+      {/* ── Level 1: Layer row ────────────────────────────────────── */}
+      <div className="flex items-center gap-1" style={{
+        background:   'rgba(28,33,39,0.95)',
+        border:       '1px solid var(--bd)',
+        borderRadius: 2,
+        padding:      '4px 6px',
+      }}>
+        {ALL_LAYERS.map(l => (
+          <LayerBtn key={l} name={l} isOn={layers.has(l)} onClick={() => onToggleLayer(l)} />
+        ))}
 
-      {/* Level 1 — Layer toggles */}
-      <div style={{ padding: '6px 8px' }}>
-        <div className="flex items-center" style={{ marginBottom: 4 }}>
-          <p className="label" style={{ color: isFiltered ? 'var(--blue-l)' : 'var(--t4)' }}>LAYER {isFiltered && '·'}</p>
-          <ExpandBtn target={2} />
-        </div>
-        <div className="flex flex-wrap gap-1">
-          {ALL_LAYERS.map(l => (
-            <Chip key={l} label={LAYER_LABEL[l]} count={l !== 'heat' ? counts.layers[l] : undefined}
-              isOn={layers.has(l)} onClick={() => onToggleLayer(l)} />
-          ))}
-        </div>
+        {/* Separator */}
+        <div style={{ width: 1, height: 14, background: 'var(--bd)', margin: '0 2px', flexShrink: 0 }} />
+
+        {/* Expand toggle */}
+        <button
+          onClick={() => setLevel(l => l === 1 ? 2 : 1)}
+          className="mono"
+          style={{
+            padding:    '2px 5px',
+            borderRadius: 2,
+            fontSize:   8,
+            cursor:     'pointer',
+            border:     `1px solid ${level > 1 || hasDeepFilter ? 'var(--blue)' : 'var(--bd)'}`,
+            background: level > 1 || hasDeepFilter ? 'var(--blue-dim)' : 'var(--bg-1)',
+            color:      level > 1 || hasDeepFilter ? 'var(--blue-l)' : 'var(--t4)',
+            display:    'flex', alignItems: 'center', gap: 2,
+          }}
+        >
+          {hasDeepFilter && <span style={{ width: 4, height: 4, borderRadius: '50%', background: 'var(--blue-l)', flexShrink: 0 }} />}
+          {level > 1
+            ? <ChevronUp   size={9} strokeWidth={2.5} />
+            : <ChevronDown size={9} strokeWidth={2.5} />}
+        </button>
+
+        {/* Reset — only when filtered */}
+        {isFiltered && (
+          <button onClick={onReset} className="mono" style={{
+            padding: '2px 5px', borderRadius: 2, fontSize: 8, cursor: 'pointer',
+            border: '1px solid var(--danger)', background: 'var(--danger-dim)', color: 'var(--danger)',
+          }}>
+            RESET
+          </button>
+        )}
       </div>
 
-      {/* Level 2 — Actor */}
+      {/* ── Level 2+: Dropdown panel ─────────────────────────────── */}
       {level >= 2 && (
-        <>
-          <ActorLevel actors={actors} actorCounts={counts.actor} onToggle={onToggleActor} />
-          <div className="flex items-center" style={{ padding: '0 8px 4px', borderTop: '1px solid var(--bd-s)' }}>
-            <p className="label" style={{ color: 'var(--t4)' }}>+ PRIORITY & STATUS</p>
-            <ExpandBtn target={3} />
-          </div>
-        </>
-      )}
+        <div style={{ background: 'rgba(28,33,39,0.97)', border: '1px solid var(--bd)', borderRadius: 2, minWidth: 260 }}>
 
-      {/* Level 3 — Priority + Status */}
-      {level >= 3 && (
-        <PriorityLevel priorities={priorities} statuses={statuses}
-          priorityCounts={counts.priority} onTogglePriority={onTogglePriority} onToggleStatus={onToggleStatus} />
+          <ActorSection actors={actors} counts={counts.byActor} onToggle={onToggleActor} />
+
+          {/* Level 3 toggle row */}
+          <div style={{ borderTop: '1px solid var(--bd-s)' }}>
+            <button onClick={() => setLevel(l => l === 2 ? 3 : 2)}
+              className="flex items-center w-full"
+              style={{ padding: '5px 10px', background: 'transparent', border: 'none', cursor: 'pointer' }}
+            >
+              <span className="label" style={{ color: 'var(--t4)' }}>PRIORITY & STATUS</span>
+              <span style={{ marginLeft: 'auto', color: 'var(--t4)', display: 'flex' }}>
+                {level === 3 ? <ChevronUp size={9} strokeWidth={2.5} /> : <ChevronDown size={9} strokeWidth={2.5} />}
+              </span>
+            </button>
+          </div>
+
+          {level >= 3 && (
+            <PrioritySection priorities={priorities} statuses={statuses}
+              priorityCounts={counts.byPriority}
+              onTogglePriority={onTogglePriority} onToggleStatus={onToggleStatus} />
+          )}
+        </div>
       )}
     </div>
   );

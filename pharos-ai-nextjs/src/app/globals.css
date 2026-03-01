@@ -34,6 +34,7 @@
   --info:      #4C90F0;
   --cyber:     #A28BE0;
   --teal:      #32C8C8;
+  --gold:      #C8C832;   /* Zones / tactical yellow */
 
   /* ── Dim / border variants ── */
   --danger-dim:  rgba(231, 106, 110, 0.12);
@@ -46,6 +47,7 @@
   --info-bd:     rgba( 76, 144, 240, 0.25);
   --blue-sel:    rgba( 45, 114, 210, 0.10);
   --teal-dim:    rgba( 50, 200, 200, 0.12);
+  --gold-dim:    rgba(200, 200,  50, 0.12);
   --cyber-dim:   rgba(162, 139, 224, 0.15);
 }
 

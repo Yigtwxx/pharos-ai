@@ -90,3 +90,21 @@ export const PRIORITY_META: Record<Priority, PriorityMeta> = {
 };
 
 export const ALL_PRIORITIES: Priority[] = ['P1', 'P2', 'P3'];
+
+// ─── Layer display config (drives the top-right filter row) ──────────────────
+
+export type LayerDisplayMeta = {
+  color:  string;   // active text color  (CSS var)
+  border: string;   // active border color (CSS var)
+  bg:     string;   // active bg color     (CSS var)
+};
+
+// Order matches ALL_LAYERS in use-map-filters.ts
+export const LAYER_DISPLAY: Record<string, LayerDisplayMeta> = {
+  strikes:  { color: 'var(--blue-l)',  border: 'var(--blue)',    bg: 'var(--blue-dim)'  },
+  missiles: { color: 'var(--danger)',  border: 'var(--danger)',  bg: 'var(--danger-dim)'},
+  targets:  { color: 'var(--warning)', border: 'var(--warning)', bg: 'var(--warning-dim)'},
+  assets:   { color: 'var(--teal)',    border: 'var(--teal)',    bg: 'var(--teal-dim)'  },
+  zones:    { color: 'var(--gold)',    border: 'var(--gold)',    bg: 'var(--gold-dim)'  },
+  heat:     { color: 'var(--cyber)',   border: 'var(--cyber)',   bg: 'var(--cyber-dim)' },
+};
