@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { CheckCircle, MapPin, Clock, Inbox, Flag, Archive, FilePlus } from 'lucide-react';
+import { CheckCircle, MapPin, Clock } from 'lucide-react';
 import mockEventsRaw from '@/data/mockEvents.json';
 
 interface Event {
@@ -16,29 +16,21 @@ interface Event {
 }
 
 const flattenEvents = (raw: any): Event[] => {
-  const eventsMap: Record<string, any[]> = raw.events || raw;
+  const map: Record<string, any[]> = raw.events || raw;
   const flat: Event[] = [];
-  Object.entries(eventsMap).forEach(([topic, evs]) => {
+  Object.entries(map).forEach(([topic, evs]) => {
     if (Array.isArray(evs)) evs.forEach((e: any) => flat.push({ ...e, topic: e.topic || topic }));
   });
   return flat.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 };
 
-const SEV_COLOR: Record<number, string> = { 3: '#FF3B30', 2: '#FF9500', 1: '#8E8E93' };
-const SEV_LABEL: Record<number, string> = { 3: 'Critical', 2: 'High', 1: 'Standard' };
-const SEV_TAG: Record<number, { bg: string; text: string }> = {
-  3: { bg: 'rgba(255,59,48,0.10)',   text: '#C0221A' },
-  2: { bg: 'rgba(255,149,0,0.10)',   text: '#B36800' },
-  1: { bg: 'rgba(142,142,147,0.12)', text: '#555558' },
+const SEV: Record<number, { label: string; color: string; bg: string; border: string }> = {
+  3: { label: 'CRITICAL', color: '#dc2626', bg: '#fef2f2', border: '#dc2626' },
+  2: { label: 'HIGH',     color: '#f97316', bg: '#fff7ed', border: '#f97316' },
+  1: { label: 'STANDARD', color: '#64748b', bg: '#f8fafc', border: '#64748b' },
 };
 
-const SEP   = 'rgba(0,0,0,0.09)';
-const LABEL  = 'rgba(0,0,0,0.88)';
-const LABEL2 = 'rgba(0,0,0,0.50)';
-const LABEL3 = 'rgba(0,0,0,0.28)';
-const SYS_BLUE = '#007AFF';
-
-const FILTERS = [
+const FILTER_PILLS = [
   { key: 'all', label: 'All' },
   { key: '3',   label: 'Critical' },
   { key: '2',   label: 'High' },
@@ -48,72 +40,71 @@ const FILTERS = [
 interface Props { selectedTopic: string; }
 
 export const EventTimeline = ({ selectedTopic }: Props) => {
-  const [importanceFilter, setImportanceFilter] = useState('all');
+  const [impFilter, setImpFilter]   = useState('all');
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
-  const allEvents = flattenEvents(mockEventsRaw);
-  const filtered = allEvents.filter(e => {
+  const all = flattenEvents(mockEventsRaw);
+  const filtered = all.filter(e => {
     const topicOk = selectedTopic === 'all' || e.topic.toLowerCase().replace(/\s+/g, '-') === selectedTopic;
-    const impOk   = importanceFilter === 'all' || String(e.importance) === importanceFilter;
+    const impOk   = impFilter === 'all' || String(e.importance) === impFilter;
     return topicOk && impOk;
   });
-
   const selected = filtered.find(e => e.id === selectedId) ?? null;
 
   return (
-    <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+    <div style={{ display: 'flex', flex: 1, minWidth: 0, overflow: 'hidden' }}>
 
-      {/* ── List pane ────────────────────────────────────────── */}
+      {/* ── Event list ──────────────────────────────────────── */}
       <div style={{
-        width: 310, minWidth: 310,
-        borderRight: `0.5px solid ${SEP}`,
-        background: '#F8F8F8',
+        width: 360, minWidth: 360, flexShrink: 0,
+        borderRight: '1px solid #e2e8f0',
+        background: 'white',
         display: 'flex', flexDirection: 'column', overflow: 'hidden',
       }}>
-
-        {/* Filter pills */}
+        {/* List header */}
         <div style={{
-          display: 'flex', alignItems: 'center', gap: 4,
-          padding: '10px 16px',
-          borderBottom: `0.5px solid ${SEP}`,
-          flexShrink: 0,
+          padding: '12px 16px',
+          borderBottom: '2px solid #dd4545',
+          background: '#f8fafc',
         }}>
-          {FILTERS.map(f => (
-            <button
-              key={f.key}
-              onClick={() => setImportanceFilter(f.key)}
-              style={{
-                padding: '3px 10px',
-                borderRadius: 20,
-                fontSize: 11.5,
-                fontWeight: 500,
-                border: 'none',
-                cursor: 'default',
-                fontFamily: 'inherit',
-                transition: 'all 0.08s',
-                background: importanceFilter === f.key ? SYS_BLUE : 'rgba(0,0,0,0.07)',
-                color: importanceFilter === f.key ? 'white' : LABEL2,
-              }}
-            >
-              {f.label}
-            </button>
-          ))}
-          <span style={{ marginLeft: 'auto', fontSize: 11, color: LABEL3 }}>
-            {filtered.length} events
-          </span>
+          <div className="news-headline" style={{ fontSize: 16, color: '#0f172a', marginBottom: 8 }}>
+            EVENT TIMELINE
+          </div>
+          {/* Filter pills */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexWrap: 'wrap' }}>
+            {FILTER_PILLS.map(f => (
+              <button
+                key={f.key}
+                onClick={() => setImpFilter(f.key)}
+                className="news-meta"
+                style={{
+                  padding: '3px 10px', borderRadius: 2, fontSize: 10,
+                  border: 'none', cursor: 'pointer', fontFamily: 'Arial, sans-serif',
+                  background: impFilter === f.key ? '#0f172a' : '#e2e8f0',
+                  color: impFilter === f.key ? 'white' : '#64748b',
+                  transition: 'all 0.08s',
+                }}
+              >
+                {f.label}
+              </button>
+            ))}
+            <span className="news-meta" style={{ marginLeft: 'auto', fontSize: 10, color: '#94a3b8' }}>
+              {filtered.length} events
+            </span>
+          </div>
         </div>
 
-        {/* Event rows */}
+        {/* Rows */}
         <div style={{ flex: 1, overflowY: 'auto' }}>
           {filtered.length === 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px 16px' }}>
-              <span style={{ fontSize: 12, color: LABEL3 }}>No events match filter</span>
+            <div style={{ padding: '32px 16px', textAlign: 'center', fontFamily: 'Arial, sans-serif', fontSize: 13, color: '#94a3b8' }}>
+              No events match filter
             </div>
           )}
           {filtered.map(event => {
             const isOn = selectedId === event.id;
-            const sevColor = SEV_COLOR[event.importance] || '#8E8E93';
-            const t = new Date(event.timestamp);
+            const sev  = SEV[event.importance] ?? SEV[1];
+            const t    = new Date(event.timestamp);
             const timeStr = t.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
 
             return (
@@ -121,60 +112,51 @@ export const EventTimeline = ({ selectedTopic }: Props) => {
                 key={event.id}
                 onClick={() => setSelectedId(isOn ? null : event.id)}
                 style={{
-                  width: '100%', textAlign: 'left',
-                  padding: '10px 14px 10px 16px',
-                  borderBottom: `0.5px solid ${SEP}`,
-                  background: isOn ? '#2F6EBA' : 'transparent',
-                  border: 'none', cursor: 'default', fontFamily: 'inherit',
+                  width: '100%', textAlign: 'left', display: 'block',
+                  padding: '12px 16px',
+                  borderLeft: `4px solid ${isOn ? sev.color : 'transparent'}`,
+                  borderTop: 'none', borderRight: 'none',
+                  borderBottom: '1px solid #e2e8f0',
+                  background: isOn ? sev.bg : 'white',
+                  cursor: 'pointer', fontFamily: 'inherit',
                   transition: 'background 0.08s',
-                  display: 'block',
                 }}
-                onMouseEnter={e => { if (!isOn) (e.currentTarget as HTMLElement).style.background = 'rgba(0,0,0,0.03)'; }}
-                onMouseLeave={e => { if (!isOn) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                onMouseEnter={e => { if (!isOn) (e.currentTarget as HTMLElement).style.background = '#f8fafc'; }}
+                onMouseLeave={e => { if (!isOn) (e.currentTarget as HTMLElement).style.background = 'white'; }}
               >
-                {/* Row top: dot + source + time */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                  <div style={{
-                    width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
-                    background: isOn ? 'rgba(255,255,255,0.8)' : sevColor,
-                  }} />
-                  <span style={{
-                    fontSize: 12, fontWeight: 600, flex: 1,
-                    whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-                    color: isOn ? 'white' : LABEL,
+                {/* Top row: severity badge + source + time */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5 }}>
+                  <span className="news-meta" style={{
+                    fontSize: 9, padding: '2px 5px', borderRadius: 2,
+                    background: sev.color, color: 'white',
                   }}>
+                    {sev.label}
+                  </span>
+                  {event.verified && (
+                    <CheckCircle size={11} style={{ color: '#16a34a', flexShrink: 0 }} strokeWidth={2} />
+                  )}
+                  <span className="news-meta" style={{ fontSize: 10, color: '#64748b', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {event.topic}
                   </span>
-                  <span style={{ fontSize: 11, whiteSpace: 'nowrap', color: isOn ? 'rgba(255,255,255,0.60)' : LABEL3 }}>
+                  <span style={{ fontSize: 11, fontFamily: 'Arial, sans-serif', color: '#94a3b8', flexShrink: 0 }}>
                     {timeStr}
                   </span>
                 </div>
 
                 {/* Title */}
-                <p style={{
-                  fontSize: 12.5, fontWeight: isOn ? 500 : 400,
-                  lineHeight: 1.4, marginBottom: 3,
-                  color: isOn ? 'white' : LABEL,
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden',
+                <p className="news-headline" style={{
+                  fontSize: 13, color: '#0f172a', lineHeight: 1.35, marginBottom: 4,
+                  display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
                 }}>
                   {event.title}
                 </p>
 
                 {/* Preview */}
-                <p style={{
-                  fontSize: 11.5,
-                  color: isOn ? 'rgba(255,255,255,0.70)' : LABEL2,
+                <p className="news-body" style={{
+                  fontSize: 12, color: '#475569',
                   whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                 }}>
-                  <span style={{
-                    display: 'inline-block', width: 6, height: 6, borderRadius: '50%',
-                    marginRight: 4, verticalAlign: 'middle',
-                    background: isOn ? 'rgba(255,255,255,0.60)' : sevColor,
-                  }} />
-                  {SEV_LABEL[event.importance]} · {event.description?.slice(0, 80)}
+                  {event.description?.slice(0, 100)}
                 </p>
               </button>
             );
@@ -182,219 +164,152 @@ export const EventTimeline = ({ selectedTopic }: Props) => {
         </div>
       </div>
 
-      {/* ── Reading pane ─────────────────────────────────────── */}
-      <div style={{ flex: 1, background: '#FFFFFF', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-
+      {/* ── Detail pane ─────────────────────────────────────── */}
+      <div style={{
+        flex: 1, minWidth: 0,
+        background: 'white',
+        display: 'flex', flexDirection: 'column', overflow: 'hidden',
+      }}>
         {!selected ? (
-          /* Empty state */
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
-            <Inbox size={44} style={{ color: LABEL3, opacity: 0.4 }} strokeWidth={1} />
-            <p style={{ fontSize: 13, color: LABEL3 }}>Select an event to read the full brief</p>
+          <div style={{
+            flex: 1, display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center', gap: 12,
+          }}>
+            <Clock size={40} style={{ color: '#cbd5e1' }} strokeWidth={1} />
+            <p className="news-meta" style={{ fontSize: 11, color: '#94a3b8' }}>
+              Select an event to read details
+            </p>
           </div>
         ) : (
-          <>
-            {/* Reading toolbar */}
-            <div style={{
-              height: 44, flexShrink: 0,
-              display: 'flex', alignItems: 'center',
-              padding: '0 16px', gap: 8,
-              borderBottom: `0.5px solid ${SEP}`,
-              background: 'rgba(246,246,246,0.93)',
-              backdropFilter: 'blur(12px)',
-            }}>
-              <span style={{
-                flex: 1, fontSize: 13, fontWeight: 500,
-                color: LABEL2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-              }}>
-                {selected.title}
-              </span>
-              <div style={{ display: 'flex', gap: 4 }}>
-                <ActionBtn icon={<Flag size={12} strokeWidth={1.5} />} label="Flag" />
-                <ActionBtn icon={<Archive size={12} strokeWidth={1.5} />} label="Archive" destructive />
-                <ActionBtn icon={<FilePlus size={12} strokeWidth={1.5} />} label="Add to Report" primary />
-              </div>
-            </div>
-
-            {/* Article body */}
-            <div style={{ flex: 1, overflowY: 'auto' }}>
-              <div style={{ padding: '28px 36px' }}>
-
-                {/* Tags */}
-                <div style={{ display: 'flex', gap: 6, marginBottom: 14, flexWrap: 'wrap' }}>
-                  <Chip style={{ background: SEV_TAG[selected.importance].bg, color: SEV_TAG[selected.importance].text }}>
-                    {SEV_LABEL[selected.importance]}
-                  </Chip>
-                  {selected.verified && (
-                    <Chip style={{ background: 'rgba(40,205,65,0.10)', color: '#1A8C2E' }}>
-                      <CheckCircle size={10} strokeWidth={2} style={{ marginRight: 3 }} />
-                      Verified
-                    </Chip>
-                  )}
-                  <Chip style={{ background: 'rgba(142,142,147,0.10)', color: '#555558' }}>
-                    {selected.topic}
-                  </Chip>
-                </div>
-
-                {/* Title */}
-                <h1 style={{
-                  fontFamily: '-apple-system, "SF Pro Display", Inter, sans-serif',
-                  fontSize: 22, fontWeight: 700,
-                  color: LABEL, lineHeight: 1.3,
-                  letterSpacing: '-0.025em',
-                  marginBottom: 10,
-                }}>
-                  {selected.title}
-                </h1>
-
-                {/* Meta row */}
-                <div style={{
-                  display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap',
-                  marginBottom: 20, paddingBottom: 16,
-                  borderBottom: `0.5px solid ${SEP}`,
-                }}>
-                  <MetaChip icon={<Clock size={12} strokeWidth={1.5} />}>
-                    {new Date(selected.timestamp).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}
-                  </MetaChip>
-                  <MetaChip icon={<MapPin size={12} strokeWidth={1.5} />}>
-                    {selected.region}
-                  </MetaChip>
-                </div>
-
-                {/* Confidence gauge */}
-                <SectionTitle>Assessment Confidence</SectionTitle>
-                <ConfidenceCard event={selected} />
-
-                {/* Summary */}
-                <SectionTitle style={{ marginTop: 24 }}>Situation Summary</SectionTitle>
-                <div style={{
-                  background: 'rgba(0,122,255,0.05)',
-                  border: '0.5px solid rgba(0,122,255,0.18)',
-                  borderRadius: 14,
-                  padding: '14px 16px',
-                  marginBottom: 24,
-                }}>
-                  <div style={{
-                    fontSize: 11, fontWeight: 600,
-                    textTransform: 'uppercase', letterSpacing: '0.06em',
-                    color: SYS_BLUE, marginBottom: 6,
-                  }}>
-                    Intelligence Brief
-                  </div>
-                  <p style={{ fontSize: 13.5, color: LABEL, lineHeight: 1.65 }}>
-                    {selected.description}
-                  </p>
-                </div>
-
-              </div>
-            </div>
-          </>
+          <EventDetail event={selected} />
         )}
       </div>
     </div>
   );
 };
 
-/* ── Sub-components ─────────────────────────────────────────────── */
-
-function SectionTitle({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
-  return (
-    <div style={{
-      fontSize: 11, fontWeight: 600,
-      textTransform: 'uppercase', letterSpacing: '0.06em',
-      color: 'rgba(0,0,0,0.30)', marginBottom: 10,
-      ...style,
-    }}>
-      {children}
-    </div>
-  );
-}
-
-function Chip({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
-  return (
-    <span style={{
-      display: 'inline-flex', alignItems: 'center',
-      padding: '3px 10px', borderRadius: 20,
-      fontSize: 11.5, fontWeight: 500,
-      ...style,
-    }}>
-      {children}
-    </span>
-  );
-}
-
-function MetaChip({ children, icon }: { children: React.ReactNode; icon: React.ReactNode }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'rgba(0,0,0,0.50)' }}>
-      {icon}
-      {children}
-    </div>
-  );
-}
-
-function ActionBtn({ icon, label, primary, destructive }: {
-  icon: React.ReactNode; label: string; primary?: boolean; destructive?: boolean;
-}) {
-  const bg = primary ? '#007AFF' : destructive ? 'rgba(255,59,48,0.09)' : 'rgba(0,0,0,0.06)';
-  const color = primary ? 'white' : destructive ? '#FF3B30' : 'rgba(0,0,0,0.88)';
-  const border = primary ? 'rgba(0,0,100,0.2)' : destructive ? 'rgba(255,59,48,0.2)' : 'rgba(0,0,0,0.10)';
+function EventDetail({ event }: { event: Event }) {
+  const sev = SEV[event.importance] ?? SEV[1];
 
   return (
-    <button style={{
-      display: 'flex', alignItems: 'center', gap: 5,
-      padding: '4px 10px', borderRadius: 6,
-      background: bg, border: `0.5px solid ${border}`,
-      fontSize: 12, fontWeight: 500, color,
-      cursor: 'default', fontFamily: 'inherit',
-      transition: 'background 0.08s',
-    }}>
-      {icon}
-      {label}
-    </button>
-  );
-}
+    <div style={{ flex: 1, overflowY: 'auto' }}>
+      {/* Colored header band */}
+      <div style={{
+        borderLeft: `6px solid ${sev.color}`,
+        borderBottom: '2px solid #e2e8f0',
+        padding: '20px 28px',
+        background: sev.bg,
+      }}>
+        {/* Tags */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+          <span className="news-meta" style={{
+            fontSize: 10, padding: '3px 8px',
+            background: sev.color, color: 'white', borderRadius: 2,
+          }}>
+            {sev.label}
+          </span>
+          {event.verified && (
+            <span className="news-meta" style={{
+              fontSize: 10, padding: '3px 8px',
+              background: '#16a34a', color: 'white', borderRadius: 2,
+              display: 'flex', alignItems: 'center', gap: 4,
+            }}>
+              <CheckCircle size={9} strokeWidth={2} />
+              VERIFIED
+            </span>
+          )}
+          <span className="news-meta" style={{
+            fontSize: 10, padding: '3px 8px',
+            background: 'rgba(0,0,0,0.08)', color: '#374151', borderRadius: 2,
+          }}>
+            {event.topic}
+          </span>
+        </div>
 
-function ConfidenceCard({ event }: { event: Event }) {
-  const sevColor = SEV_COLOR[event.importance] || '#8E8E93';
-  const pct = Math.round((event.importance / 3) * 100);
-  const r = 24;
-  const circ = 2 * Math.PI * r;
-  const offset = circ - (pct / 100) * circ;
-  const label = event.importance === 3 ? 'High Priority' : event.importance === 2 ? 'Medium Priority' : 'Standard';
-
-  return (
-    <div style={{
-      background: '#F8F8F8',
-      border: '0.5px solid rgba(0,0,0,0.09)',
-      borderRadius: 14,
-      padding: '16px 20px',
-      display: 'flex', alignItems: 'center', gap: 20,
-      marginBottom: 0,
-    }}>
-      {/* Ring */}
-      <div style={{ position: 'relative', width: 60, height: 60, flexShrink: 0 }}>
-        <svg width="60" height="60" viewBox="0 0 60 60" style={{ transform: 'rotate(-90deg)' }}>
-          <circle fill="none" stroke="rgba(0,0,0,0.08)" strokeWidth="5" cx="30" cy="30" r={r} />
-          <circle
-            fill="none" stroke={sevColor} strokeWidth="5" strokeLinecap="round"
-            cx="30" cy="30" r={r}
-            strokeDasharray={circ.toFixed(2)}
-            strokeDashoffset={offset.toFixed(2)}
-          />
-        </svg>
-        <div style={{
-          position: 'absolute', inset: 0,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 14, fontWeight: 700, color: sevColor,
+        {/* Title */}
+        <h1 className="news-headline" style={{
+          fontSize: 26, color: '#0f172a',
+          lineHeight: 1.2, marginBottom: 12,
         }}>
-          {pct}%
+          {event.title}
+        </h1>
+
+        {/* Meta */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <Clock size={12} style={{ color: '#64748b' }} strokeWidth={1.5} />
+            <span style={{ fontSize: 12, color: '#64748b', fontFamily: 'Arial, sans-serif' }}>
+              {new Date(event.timestamp).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}
+            </span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <MapPin size={12} style={{ color: '#64748b' }} strokeWidth={1.5} />
+            <span style={{ fontSize: 12, color: '#64748b', fontFamily: 'Arial, sans-serif' }}>
+              {event.region}
+            </span>
+          </div>
         </div>
       </div>
-      {/* Info */}
-      <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 15, fontWeight: 600, color: sevColor, marginBottom: 4 }}>{label}</div>
-        <div style={{ fontSize: 12.5, color: 'rgba(0,0,0,0.50)', lineHeight: 1.5 }}>
-          {event.verified ? 'Source verified.' : 'Unverified.'} Importance level {event.importance}/3.
+
+      {/* Body */}
+      <div style={{ padding: '24px 28px' }}>
+
+        {/* SUMMARY section */}
+        <div className="news-meta" style={{ fontSize: 10, color: '#94a3b8', marginBottom: 10 }}>
+          Summary
         </div>
+        <div style={{
+          borderLeft: `4px solid ${sev.color}`,
+          paddingLeft: 16, marginBottom: 28,
+        }}>
+          <p className="news-body" style={{ fontSize: 14, color: '#1e293b', lineHeight: 1.7 }}>
+            {event.description}
+          </p>
+        </div>
+
+        {/* Priority card */}
+        <div className="news-meta" style={{ fontSize: 10, color: '#94a3b8', marginBottom: 10 }}>
+          Intelligence Assessment
+        </div>
+        <div style={{
+          border: `1px solid ${sev.color}`,
+          borderRadius: 4,
+          padding: '16px 20px',
+          background: sev.bg,
+          display: 'flex', alignItems: 'center', gap: 20,
+          marginBottom: 28,
+        }}>
+          {/* Ring gauge */}
+          <div style={{ position: 'relative', width: 64, height: 64, flexShrink: 0 }}>
+            <svg width="64" height="64" viewBox="0 0 64 64" style={{ transform: 'rotate(-90deg)' }}>
+              <circle fill="none" stroke="rgba(0,0,0,0.10)" strokeWidth="6" cx="32" cy="32" r="26" />
+              <circle
+                fill="none" stroke={sev.color} strokeWidth="6" strokeLinecap="round"
+                cx="32" cy="32" r="26"
+                strokeDasharray={(2 * Math.PI * 26).toFixed(1)}
+                strokeDashoffset={(2 * Math.PI * 26 * (1 - event.importance / 3)).toFixed(1)}
+              />
+            </svg>
+            <div style={{
+              position: 'absolute', inset: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <span className="news-headline" style={{ fontSize: 14, color: sev.color }}>
+                {Math.round((event.importance / 3) * 100)}%
+              </span>
+            </div>
+          </div>
+          <div>
+            <div className="news-headline" style={{ fontSize: 15, color: sev.color, marginBottom: 4 }}>
+              {event.importance === 3 ? 'High Priority' : event.importance === 2 ? 'Elevated Priority' : 'Standard Priority'}
+            </div>
+            <p style={{ fontSize: 12, color: '#475569', fontFamily: 'Arial, sans-serif', lineHeight: 1.5 }}>
+              {event.verified ? 'Source verified.' : 'Source unverified.'}{' '}
+              Importance level {event.importance}/3.
+            </p>
+          </div>
+        </div>
+
       </div>
     </div>
   );

@@ -9,9 +9,7 @@ export default function TimelinePage() {
   return (
     <>
       <TopicSidebar selected={selectedTopic} onSelect={setSelectedTopic} />
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <EventTimeline selectedTopic={selectedTopic} />
-      </div>
+      <EventTimeline selectedTopic={selectedTopic} />
     </>
   );
 }

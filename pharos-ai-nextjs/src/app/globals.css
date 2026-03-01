@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* shadcn compatibility */
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-card: hsl(var(--card));
@@ -21,73 +20,72 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
-  --radius-sm: 4px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius: 6px;
-
-  /* Pharos macOS design tokens → Tailwind */
-  --color-window:   #ECECEC;
-  --color-toolbar:  rgba(246,246,246,0.93);
-  --color-sidebar:  rgba(238,238,238,0.90);
-  --color-surface:  #FFFFFF;
-  --color-panel:    #F8F8F8;
-  --color-hover:    rgba(0,0,0,0.04);
-  --color-selected: #2F6EBA;
-  --color-sep:      rgba(0,0,0,0.09);
-  --color-sep-strong: rgba(0,0,0,0.14);
-  --color-label:    rgba(0,0,0,0.88);
-  --color-label-2:  rgba(0,0,0,0.50);
-  --color-label-3:  rgba(0,0,0,0.28);
-  --color-sys-blue:   #007AFF;
-  --color-sys-red:    #FF3B30;
-  --color-sys-green:  #28CD41;
-  --color-sys-orange: #FF9500;
-  --color-sys-purple: #AF52DE;
-  --color-sys-gray:   #8E8E93;
-
-  --font-sans: -apple-system, "SF Pro Text", "Inter", "Helvetica Neue", sans-serif;
-  --font-display: -apple-system, "SF Pro Display", "Inter", "Helvetica Neue", sans-serif;
-  --font-serif: Georgia, 'Times New Roman', serif;
+  --radius: 0.25rem;
 }
 
 :root {
-  /* shadcn tokens (light mode) */
-  --background: 0 0% 100%;
-  --foreground: 0 0% 9%;
+  --background: 0 0% 98%;
+  --foreground: 220 14% 8%;
   --card: 0 0% 100%;
-  --card-foreground: 0 0% 9%;
+  --card-foreground: 220 14% 8%;
   --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 9%;
-  --primary: 211 100% 50%;
-  --primary-foreground: 0 0% 100%;
+  --popover-foreground: 220 14% 8%;
+  --primary: 220 14% 8%;
+  --primary-foreground: 0 0% 98%;
   --secondary: 0 0% 96%;
-  --secondary-foreground: 0 0% 9%;
+  --secondary-foreground: 220 14% 8%;
   --muted: 0 0% 96%;
   --muted-foreground: 0 0% 45%;
   --accent: 0 0% 96%;
-  --accent-foreground: 0 0% 9%;
-  --destructive: 4 86% 58%;
-  --destructive-foreground: 0 0% 100%;
-  --border: 0 0% 91%;
-  --input: 0 0% 91%;
-  --ring: 211 100% 50%;
+  --accent-foreground: 220 14% 8%;
+  --destructive: 0 84% 45%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 88%;
+  --input: 0 0% 88%;
+  --ring: 220 14% 8%;
+
+  /* Pharos brand tokens */
+  --pharos-red:       #dd4545;
+  --pharos-header:    #0f172a;  /* slate-900 */
+  --pharos-critical:  #dc2626;  /* red-600 */
+  --pharos-high:      #f97316;  /* orange-500 */
+  --pharos-standard:  #64748b;  /* slate-500 */
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; overflow: hidden; }
+html, body { height: 100%; }
 
 body {
-  font-family: -apple-system, "SF Pro Text", "Inter", "Helvetica Neue", sans-serif;
-  background: #ECECEC;
-  color: rgba(0,0,0,0.88);
-  font-size: 13px;
+  font-family: "Georgia", "Times New Roman", serif;
+  background: #f8fafc;
+  color: #0f172a;
+  font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Apple-style scrollbar */
-::-webkit-scrollbar { width: 7px; }
+/* News typography */
+.news-headline {
+  font-family: "Arial", "Helvetica", sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.news-body {
+  font-family: "Georgia", "Times New Roman", serif;
+  line-height: 1.65;
+}
+
+.news-meta {
+  font-family: "Arial", "Helvetica", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.18); border-radius: 4px; border: 2px solid transparent; background-clip: padding-box; }
-::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.28); background-clip: padding-box; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
