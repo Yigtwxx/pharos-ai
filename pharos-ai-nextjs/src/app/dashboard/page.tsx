@@ -1,7 +1,11 @@
 'use client';
+import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { CONFLICT }  from '@/data/iranConflict';
+
+const IntelMap = dynamic(() => import('@/components/dashboard/IntelMap'), { ssr: false });
 import { EVENTS }    from '@/data/iranEvents';
 import { ACTORS, ACT_C, STA_C } from '@/data/iranActors';
 import { X_POSTS }   from '@/data/iranXPosts';
@@ -37,6 +41,15 @@ const CHIPS = [
 ] as const;
 
 export default function OverviewPage() {
+  const [wideScreen, setWideScreen] = useState(false);
+
+  useEffect(() => {
+    const check = () => setWideScreen(window.innerWidth >= 1500);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
   const sortedEvents = [...EVENTS]
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
     .slice(0, 6);
@@ -173,7 +186,7 @@ export default function OverviewPage() {
         </div>
 
         {/* ── RIGHT ~40% — Actors + Signals ── */}
-        <div style={{ flex: 2, minWidth: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <div style={{ flex: 2, minWidth: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden', borderRight: wideScreen ? '1px solid var(--bd)' : undefined }}>
 
           {/* Actor Positions */}
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', borderBottom: '1px solid var(--bd)' }}>
@@ -256,6 +269,13 @@ export default function OverviewPage() {
             </div>
           </div>
         </div>
+
+        {/* ── INTEL MAP (wide screens ≥1500px) ── */}
+        {wideScreen && (
+          <div style={{ flex: 2, minWidth: 0, borderLeft: '1px solid var(--bd)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <IntelMap />
+          </div>
+        )}
       </div>
     </div>
   );
