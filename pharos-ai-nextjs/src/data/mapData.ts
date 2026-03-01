@@ -98,18 +98,6 @@ export const STRIKE_ARCS: StrikeArc[] = [
   { id: 's14', actor: 'US',     priority: 'P2', category: 'KINETIC', type: 'NAVAL_STRIKE', status: 'COMPLETE', from: [58.0,    25.5   ], to: [50.3248, 29.2352], label: 'Naval Strike: USS Ford → Kharg Island',         severity: 'HIGH'     },
   { id: 's15', actor: 'US',     priority: 'P2', category: 'KINETIC', type: 'AIRSTRIKE',    status: 'COMPLETE', from: [51.3149, 25.1175], to: [51.4,    35.7   ], label: 'USAF Strike: Al Udeid → Tehran Radar',          severity: 'HIGH'     },
   { id: 's16', actor: 'US',     priority: 'P2', category: 'KINETIC', type: 'AIRSTRIKE',    status: 'COMPLETE', from: [54.5477, 24.2483], to: [51.5059, 35.7607], label: 'USAF Strike: Al Dhafra → Lavizan Complex',      severity: 'HIGH'     },
-
-  // ── Day 2 strike arcs (March 1) ───────────────────────────────────────────
-  { id: 's17', actor: 'US',       priority: 'P1', category: 'KINETIC', type: 'AIRSTRIKE',    status: 'COMPLETE', from: [72.4232, -7.3195], to: [50.5719, 34.8846], label: 'B-2 Day 2: Diego Garcia → Fordow (follow-up)',      severity: 'CRITICAL' },
-  { id: 's18', actor: 'US',       priority: 'P1', category: 'KINETIC', type: 'AIRSTRIKE',    status: 'COMPLETE', from: [72.4232, -7.3195], to: [51.7260, 33.7243], label: 'B-2 Day 2: Diego Garcia → Natanz (follow-up)',      severity: 'CRITICAL' },
-  { id: 's19', actor: 'US',       priority: 'P2', category: 'KINETIC', type: 'NAVAL_STRIKE', status: 'COMPLETE', from: [58.0,    25.5   ], to: [56.2666, 27.1832], label: 'Naval Day 2: USS Ford → IRGC Bandar Abbas (40 TLAMs)', severity: 'CRITICAL' },
-  { id: 's20', actor: 'US',       priority: 'P2', category: 'KINETIC', type: 'NAVAL_STRIKE', status: 'COMPLETE', from: [58.0,    25.5   ], to: [60.6223, 25.3467], label: 'Naval Day 2: USS Ford → IRGC Chabahar (destroyed)',  severity: 'HIGH'     },
-  { id: 's21', actor: 'US',       priority: 'P2', category: 'KINETIC', type: 'AIRSTRIKE',    status: 'COMPLETE', from: [51.3149, 25.1175], to: [44.2700, 33.3000], label: 'USAF Day 2: Al Udeid → Kata\'ib Hezbollah Depot Iraq', severity: 'HIGH'     },
-  { id: 's22', actor: 'US',       priority: 'P2', category: 'KINETIC', type: 'AIRSTRIKE',    status: 'COMPLETE', from: [72.4232, -7.3195], to: [44.2066, 15.3694], label: 'B-52 Day 2: Diego Garcia → Houthi Al-Dailami AB',   severity: 'HIGH'     },
-  { id: 's23', actor: 'US',       priority: 'P2', category: 'KINETIC', type: 'NAVAL_STRIKE', status: 'COMPLETE', from: [44.0,    12.5   ], to: [42.9541, 14.7969], label: 'Naval Day 2: USS Eisenhower → Houthi Hodeidah',     severity: 'HIGH'     },
-  { id: 's24', actor: 'ISRAEL',   priority: 'P2', category: 'KINETIC', type: 'AIRSTRIKE',    status: 'COMPLETE', from: [34.9408, 31.2083], to: [35.5184, 33.8706], label: 'IDF NShield: Nevatim → Hezbollah Dahieh, Beirut',   severity: 'HIGH'     },
-  { id: 's25', actor: 'ISRAEL',   priority: 'P2', category: 'KINETIC', type: 'AIRSTRIKE',    status: 'COMPLETE', from: [34.9408, 31.2083], to: [35.5461, 33.2711], label: 'IDF NShield: Nevatim → Hezbollah S.Lebanon storage', severity: 'HIGH'     },
-  { id: 's26', actor: 'ISRAEL',   priority: 'P2', category: 'KINETIC', type: 'AIRSTRIKE',    status: 'COMPLETE', from: [34.9408, 31.2083], to: [36.2165, 34.0042], label: 'IDF NShield: Nevatim → Hezbollah Baalbek HQ',       severity: 'HIGH'     },
 ];
 
 // ─── Missile tracks ───────────────────────────────────────────────────────────
@@ -127,18 +115,6 @@ export const MISSILE_TRACKS: MissileTrack[] = [
   { id: 'm10', actor: 'IRGC',   priority: 'P2', category: 'KINETIC', type: 'BALLISTIC', status: 'INTERCEPTED', from: [51.3890, 35.6840], to: [34.7818, 32.0853], label: 'IRGC Ballistic: Imam Ali Base → Tel Aviv (Wave 2)',     severity: 'CRITICAL' },
   { id: 'm11', actor: 'IRGC',   priority: 'P3', category: 'KINETIC', type: 'BALLISTIC', status: 'INTERCEPTED', from: [46.3600, 38.0800], to: [35.0018, 32.7940], label: 'IRGC Ballistic: Tabriz → Haifa (intercepted)',          severity: 'HIGH'     },
   { id: 'm12', actor: 'IRGC',   priority: 'P2', category: 'KINETIC', type: 'BALLISTIC', status: 'IMPACTED',    from: [48.6799, 31.3342], to: [47.5804, 24.0621], label: 'IRGC Ballistic: Ahvaz → Prince Sultan AB Saudi (HIT)', severity: 'HIGH'     },
-
-  // ── Day 2 missile tracks (March 1) ───────────────────────────────────────
-  { id: 'm13', actor: 'IRGC',      priority: 'P1', category: 'KINETIC', type: 'BALLISTIC', status: 'IMPACTED',    from: [48.6799, 31.3342], to: [50.5860, 26.2285], label: 'IRGC Day 2: Ahvaz → NSA Bahrain (HIT — 2 US KIA)',          severity: 'CRITICAL' },
-  { id: 'm14', actor: 'IRGC',      priority: 'P1', category: 'KINETIC', type: 'BALLISTIC', status: 'IMPACTED',    from: [51.3890, 35.6840], to: [51.3149, 25.1175], label: 'IRGC Day 2: Imam Ali Base → Al Udeid Qatar (HIT)',          severity: 'CRITICAL' },
-  { id: 'm15', actor: 'IRGC',      priority: 'P2', category: 'KINETIC', type: 'BALLISTIC', status: 'INTERCEPTED', from: [51.4,    35.7   ], to: [34.7818, 32.0853], label: 'IRGC Day 2: Tehran → Tel Aviv Wave 2 (intercepted)',        severity: 'CRITICAL' },
-  { id: 'm16', actor: 'IRGC',      priority: 'P2', category: 'KINETIC', type: 'BALLISTIC', status: 'INTERCEPTED', from: [51.4,    35.7   ], to: [35.1551, 30.9977], label: 'IRGC Day 2: Tehran → Dimona reactor (intercepted)',         severity: 'CRITICAL' },
-  { id: 'm17', actor: 'IRGC',      priority: 'P2', category: 'KINETIC', type: 'DRONE',     status: 'INTERCEPTED', from: [51.4,    35.7   ], to: [34.7818, 32.0853], label: 'IRGC Day 2: Shahed swarm Wave 3 → Israel (97/110 down)',  severity: 'HIGH'     },
-  { id: 'm18', actor: 'HEZBOLLAH', priority: 'P2', category: 'KINETIC', type: 'BALLISTIC', status: 'IMPACTED',    from: [35.5,    33.2   ], to: [35.0000, 32.7940], label: 'Hezbollah Day 2: S.Lebanon → Haifa (HIT — 4 civilians KIA)', severity: 'HIGH'     },
-  { id: 'm19', actor: 'HEZBOLLAH', priority: 'P2', category: 'KINETIC', type: 'BALLISTIC', status: 'INTERCEPTED', from: [35.5,    33.3   ], to: [35.5695, 33.2701], label: 'Hezbollah Day 2: S.Lebanon → Kiryat Shmona (intercepted)',  severity: 'HIGH'     },
-  { id: 'm20', actor: 'HOUTHI',    priority: 'P2', category: 'KINETIC', type: 'BALLISTIC', status: 'INTERCEPTED', from: [44.2066, 15.3694], to: [44.0,    12.5   ], label: 'Houthi Day 2: Sanaa → USS Eisenhower (SM-3 intercept)',    severity: 'HIGH'     },
-  { id: 'm21', actor: 'PMF',       priority: 'P2', category: 'KINETIC', type: 'BALLISTIC', status: 'IMPACTED',    from: [44.2700, 33.3000], to: [42.4412, 33.7856], label: 'PMF Day 2: S.Baghdad → Ayn al-Asad Iraq (HIT — 2 US KIA)', severity: 'HIGH'     },
-  { id: 'm22', actor: 'HEZBOLLAH', priority: 'P3', category: 'KINETIC', type: 'DRONE',     status: 'INTERCEPTED', from: [35.5184, 33.8706], to: [34.9408, 31.2083], label: 'Hezbollah: Anti-aircraft drone → Nevatim (intercepted)',   severity: 'HIGH'     },
 ];
 
 // ─── Targets (Iranian installations) ─────────────────────────────────────────
@@ -161,17 +137,6 @@ export const TARGETS: Target[] = [
   { id: 't15', actor: 'IRGC', priority: 'P3', category: 'INSTALLATION', type: 'COMMAND',        status: 'DAMAGED',   name: 'IRGC Ahvaz',          position: [48.6799, 31.3342], description: 'Regional IRGC command, missile operations degraded' },
   { id: 't16', actor: 'IRAN', priority: 'P3', category: 'INSTALLATION', type: 'INFRASTRUCTURE', status: 'DESTROYED', name: 'Isfahan Drone Base',  position: [51.5,    32.5   ], description: 'Shahid drone production and storage' },
   { id: 't17', actor: 'IRAN', priority: 'P1', category: 'INSTALLATION', type: 'COMMAND',        status: 'DESTROYED', name: 'Khamenei Compound',   position: [51.4,    35.76  ], description: 'Supreme Leader compound — confirmed KIA site' },
-
-  // ── Day 2 targets (March 1) ───────────────────────────────────────────────
-  { id: 't18', actor: 'IRGC',      priority: 'P2', category: 'INSTALLATION', type: 'NAVAL_BASE',     status: 'DESTROYED', name: 'IRGC Chabahar Naval Base',           position: [60.6223, 25.3467], description: 'IRGC strategic reserve fleet — 12 Tomahawks, IRIS Damavand frigate destroyed' },
-  { id: 't19', actor: 'HEZBOLLAH', priority: 'P2', category: 'INSTALLATION', type: 'COMMAND',        status: 'STRUCK',    name: 'Hezbollah Dahieh HQ, Beirut',        position: [35.5184, 33.8706], description: 'Radwan Force command infrastructure, Haret Hreik district — IDF Op Northern Shield' },
-  { id: 't20', actor: 'HEZBOLLAH', priority: 'P2', category: 'INSTALLATION', type: 'INFRASTRUCTURE', status: 'DESTROYED', name: 'Hezbollah Baalbek Complex',          position: [36.2165, 34.0042], description: 'Primary Bekaa Valley weapons storage — 5+ buildings destroyed per satellite BDA' },
-  { id: 't21', actor: 'HEZBOLLAH', priority: 'P2', category: 'INSTALLATION', type: 'INFRASTRUCTURE', status: 'DESTROYED', name: 'Hezbollah S.Lebanon Missile Storage', position: [35.5461, 33.2711], description: 'Falaq-2 and Katyusha rocket storage south of Litani River — 12 strike signatures confirmed' },
-  { id: 't22', actor: 'HOUTHI',    priority: 'P2', category: 'INSTALLATION', type: 'AIR_BASE',       status: 'DESTROYED', name: 'Houthi Al-Dailami AB, Sanaa',        position: [44.2200, 15.4780], description: 'Primary Houthi ballistic missile storage/launch complex — B-52 JASSM-ER strike' },
-  { id: 't23', actor: 'HOUTHI',    priority: 'P2', category: 'INSTALLATION', type: 'INFRASTRUCTURE', status: 'DESTROYED', name: 'Houthi Drone Factory, Sanaa',        position: [44.1800, 15.3500], description: 'Shahed-136 clone production facility — IRGC-built, destroyed by USAF strike' },
-  { id: 't24', actor: 'PMF',       priority: 'P2', category: 'INSTALLATION', type: 'INFRASTRUCTURE', status: 'DESTROYED', name: 'Kata\'ib Hezbollah Depot, Jurf al-Sakhar', position: [44.2700, 33.3000], description: 'Primary weapons and ammunition depot — F-15E precision strike' },
-  { id: 't25', actor: 'PMF',       priority: 'P3', category: 'INSTALLATION', type: 'COMMAND',        status: 'STRUCK',    name: 'Kata\'ib Hezbollah Command, Abu Ghraib', position: [44.0600, 33.3800], description: 'KH command node — struck in CENTCOM retaliation for Ayn al-Asad attack' },
-  { id: 't26', actor: 'IRAN',      priority: 'P3', category: 'INSTALLATION', type: 'INFRASTRUCTURE', status: 'STRUCK',    name: 'Iranian Early-Warning Radar Network',  position: [46.0,    34.0   ], description: 'SEAD operations Day 2 — IDF and USAF destroyed remaining Bavar-373 and SA-20 coverage across western Iran' },
 ];
 
 // ─── Allied assets ────────────────────────────────────────────────────────────
@@ -286,24 +251,4 @@ export const HEAT_POINTS: HeatPoint[] = [
   { position: [48.6799, 31.3342], weight: 0.6 }, { position: [48.7299, 31.3842], weight: 0.55 },
   { position: [48.6299, 31.2842], weight: 0.5 }, { position: [48.7099, 31.3142], weight: 0.55 },
   { position: [48.6599, 31.3642], weight: 0.5 },
-  // Chabahar IRGC naval cluster (Day 2)
-  { position: [60.6223, 25.3467], weight: 0.8 }, { position: [60.6723, 25.3967], weight: 0.75 },
-  { position: [60.5723, 25.2967], weight: 0.7 }, { position: [60.6523, 25.3167], weight: 0.75 },
-  { position: [60.5923, 25.3767], weight: 0.7 },
-  // Hezbollah Dahieh Beirut cluster (Day 2)
-  { position: [35.5184, 33.8706], weight: 0.65 }, { position: [35.5684, 33.9206], weight: 0.6 },
-  { position: [35.4684, 33.8206], weight: 0.55 }, { position: [35.5484, 33.8406], weight: 0.6 },
-  { position: [35.4984, 33.9006], weight: 0.55 },
-  // Hezbollah Baalbek cluster (Day 2)
-  { position: [36.2165, 34.0042], weight: 0.7 }, { position: [36.2665, 34.0542], weight: 0.65 },
-  { position: [36.1665, 33.9542], weight: 0.6 }, { position: [36.2465, 33.9742], weight: 0.65 },
-  { position: [36.1965, 34.0342], weight: 0.6 },
-  // Houthi Sanaa cluster (Day 2)
-  { position: [44.2066, 15.3694], weight: 0.6 }, { position: [44.2566, 15.4194], weight: 0.55 },
-  { position: [44.1566, 15.3194], weight: 0.5 }, { position: [44.2266, 15.3494], weight: 0.55 },
-  { position: [44.1766, 15.3894], weight: 0.5 },
-  // PMF Iraq cluster (Day 2)
-  { position: [44.2700, 33.3000], weight: 0.5 }, { position: [44.3200, 33.3500], weight: 0.45 },
-  { position: [44.2200, 33.2500], weight: 0.4 }, { position: [44.3000, 33.2800], weight: 0.45 },
-  { position: [44.2500, 33.3300], weight: 0.4 },
 ];
