@@ -8,7 +8,7 @@
 
 // ─── Level 1: Actor ───────────────────────────────────────────────────────────
 
-export type Actor = 'US' | 'ISRAEL' | 'NATO' | 'IRAN' | 'IRGC' | 'HOUTHI';
+export type Actor = 'US' | 'ISRAEL' | 'NATO' | 'IRAN' | 'IRGC' | 'HOUTHI' | 'HEZBOLLAH' | 'PMF';
 export type Affiliation = 'FRIENDLY' | 'HOSTILE';
 
 type ActorMeta = {
@@ -25,11 +25,13 @@ export const ACTOR_META: Record<Actor, ActorMeta> = {
   NATO:   { label: 'NATO',          cssVar: 'var(--cyber)',   rgb: [160, 100, 220], affiliation: 'FRIENDLY', group: 'Coalition' },
   IRAN:   { label: 'Iran',          cssVar: 'var(--danger)',  rgb: [231, 106, 110], affiliation: 'HOSTILE',  group: 'Adversary' },
   IRGC:   { label: 'IRGC',         cssVar: 'var(--danger)',  rgb: [200,  50,  50], affiliation: 'HOSTILE',  group: 'Adversary' },
-  HOUTHI: { label: 'Houthi',        cssVar: 'var(--warning)', rgb: [236, 154,  60], affiliation: 'HOSTILE',  group: 'Adversary' },
+  HOUTHI:    { label: 'Houthi',      cssVar: 'var(--warning)', rgb: [236, 154,  60], affiliation: 'HOSTILE',  group: 'Adversary' },
+  HEZBOLLAH: { label: 'Hezbollah',   cssVar: 'var(--danger)',  rgb: [180,  40,  40], affiliation: 'HOSTILE',  group: 'Adversary' },
+  PMF:       { label: 'Iraqi PMF',   cssVar: 'var(--warning)', rgb: [200, 120,  40], affiliation: 'HOSTILE',  group: 'Adversary' },
 };
 
 export const FRIENDLY_ACTORS: Actor[] = ['US', 'ISRAEL', 'NATO'];
-export const HOSTILE_ACTORS:  Actor[] = ['IRAN', 'IRGC', 'HOUTHI'];
+export const HOSTILE_ACTORS:  Actor[] = ['IRAN', 'IRGC', 'HOUTHI', 'HEZBOLLAH', 'PMF'];
 export const ALL_ACTORS:      Actor[] = [...FRIENDLY_ACTORS, ...HOSTILE_ACTORS];
 
 // ─── Level 2: Category ────────────────────────────────────────────────────────
