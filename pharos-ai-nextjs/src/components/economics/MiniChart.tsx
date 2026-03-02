@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { createChart, type IChartApi, ColorType, LineStyle } from 'lightweight-charts';
+import { createChart, type IChartApi, ColorType, LineStyle, AreaSeries } from 'lightweight-charts';
 
 interface MiniChartProps {
   data: { time: number; value: number }[];
@@ -56,7 +56,7 @@ export function MiniChart({ data, color, positive, height = 80 }: MiniChartProps
     const topColor = positive ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)';
     const bottomColor = 'rgba(0,0,0,0)';
 
-    const series = (chart as any).addSeries('Area', {
+    const series = chart.addSeries(AreaSeries, {
       lineColor,
       topColor,
       bottomColor,

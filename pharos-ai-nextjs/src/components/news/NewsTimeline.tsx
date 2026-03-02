@@ -101,20 +101,37 @@ export function NewsTimeline({ feedData }: NewsTimelineProps) {
   const [selectedTiers, setSelectedTiers] = useState<Set<number>>(new Set([1, 2, 3, 4]));
   const viewportRef = useRef<HTMLDivElement>(null);
 
-  const [zoom, setZoom] = useState(DEFAULT_ZOOM);
-  const [pan, setPan] = useState({ x: 0, y: 0 });
+  // ── Use refs as the single source of truth for transform state.
+  // Event handlers read/write refs directly — no stale closures.
+  // setState only triggers re-render; actual values come from refs.
+  const zoomRef = useRef(DEFAULT_ZOOM);
+  const panRef  = useRef({ x: 0, y: 0 });
+  const [transform, setTransform] = useState({ zoom: DEFAULT_ZOOM, pan: { x: 0, y: 0 } });
+
+  const commitTransform = useCallback(() => {
+    setTransform({ zoom: zoomRef.current, pan: { ...panRef.current } });
+  }, []);
+
+  const zoom = transform.zoom;
+  const pan  = transform.pan;
+
   const [isDragging, setIsDragging] = useState(false);
   const dragState = useRef({ active: false, startX: 0, startY: 0, panX: 0, panY: 0, moved: false });
   const initialCenterDone = useRef(false);
 
-  // ─── Drag to pan ────────────────────────────────────────────
+  // ─── Drag to pan (registered once — reads refs, no deps) ────
   useEffect(() => {
     const el = viewportRef.current;
     if (!el) return;
 
     const onDown = (e: MouseEvent) => {
       if ((e.target as HTMLElement).closest('a')) return;
-      dragState.current = { active: true, startX: e.clientX, startY: e.clientY, panX: pan.x, panY: pan.y, moved: false };
+      dragState.current = {
+        active: true,
+        startX: e.clientX, startY: e.clientY,
+        panX: panRef.current.x, panY: panRef.current.y,
+        moved: false,
+      };
       setIsDragging(true);
       e.preventDefault();
     };
@@ -124,7 +141,8 @@ export function NewsTimeline({ feedData }: NewsTimelineProps) {
       const dx = e.clientX - dragState.current.startX;
       const dy = e.clientY - dragState.current.startY;
       if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragState.current.moved = true;
-      setPan({ x: dragState.current.panX + dx, y: dragState.current.panY + dy });
+      panRef.current = { x: dragState.current.panX + dx, y: dragState.current.panY + dy };
+      commitTransform();
     };
 
     const onClick = (e: MouseEvent) => {
@@ -149,9 +167,9 @@ export function NewsTimeline({ feedData }: NewsTimelineProps) {
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseup', onUp);
     };
-  }, [pan.x, pan.y]);
+  }, [commitTransform]); // commitTransform is stable
 
-  // ─── Scroll to zoom ────────────────────────────────────────
+  // ─── Scroll to zoom (registered once — reads refs, no deps) ─
   useEffect(() => {
     const el = viewportRef.current;
     if (!el) return;
@@ -162,21 +180,23 @@ export function NewsTimeline({ feedData }: NewsTimelineProps) {
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
 
+      const currentZoom = zoomRef.current;
       const direction = e.deltaY > 0 ? -1 : 1;
-      const newZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom + direction * ZOOM_STEP));
-      if (newZoom === zoom) return;
+      const newZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, currentZoom + direction * ZOOM_STEP));
+      if (newZoom === currentZoom) return;
 
-      const scale = newZoom / zoom;
-      setPan(prev => ({
-        x: mouseX - scale * (mouseX - prev.x),
-        y: mouseY - scale * (mouseY - prev.y),
-      }));
-      setZoom(newZoom);
+      const scale = newZoom / currentZoom;
+      const px = panRef.current.x;
+      const py = panRef.current.y;
+
+      panRef.current  = { x: mouseX - scale * (mouseX - px), y: mouseY - scale * (mouseY - py) };
+      zoomRef.current = newZoom;
+      commitTransform();
     };
 
     el.addEventListener('wheel', onWheel, { passive: false });
     return () => el.removeEventListener('wheel', onWheel);
-  }, [zoom]);
+  }, [commitTransform]); // commitTransform is stable
 
   // ─── Articles ───────────────────────────────────────────────
   const articles = useMemo(() => {
@@ -249,12 +269,13 @@ export function NewsTimeline({ feedData }: NewsTimelineProps) {
     const rect = vp.getBoundingClientRect();
     const last = layout.positioned[layout.positioned.length - 1];
     const targetX = last.x + CARD_W / 2;
-    const z = zoom;
-    setPan({
+    const z = zoomRef.current;
+    panRef.current = {
       x: rect.width - targetX * z - 200,
       y: (rect.height / 2) - SPINE_Y * z,
-    });
-  }, [layout, zoom]);
+    };
+    commitTransform();
+  }, [layout, commitTransform]);
 
   // Initial center
   useEffect(() => {
@@ -264,19 +285,20 @@ export function NewsTimeline({ feedData }: NewsTimelineProps) {
   }, [layout.positioned.length, centerOnNewest]);
 
   const resetView = useCallback(() => {
-    setZoom(DEFAULT_ZOOM);
+    zoomRef.current = DEFAULT_ZOOM;
     requestAnimationFrame(() => {
       const vp = viewportRef.current;
       if (!vp || layout.positioned.length === 0) return;
       const rect = vp.getBoundingClientRect();
       const last = layout.positioned[layout.positioned.length - 1];
       const targetX = last.x + CARD_W / 2;
-      setPan({
+      panRef.current = {
         x: rect.width - targetX * DEFAULT_ZOOM - 200,
         y: (rect.height / 2) - SPINE_Y * DEFAULT_ZOOM,
-      });
+      };
+      commitTransform();
     });
-  }, [layout]);
+  }, [layout, commitTransform]);
 
   const toggleTier = useCallback((tier: number) => {
     setSelectedTiers(prev => {
@@ -328,12 +350,12 @@ export function NewsTimeline({ feedData }: NewsTimelineProps) {
         <div className="ml-auto flex items-center gap-3">
           <div className="flex items-center gap-1.5 border border-white/20 rounded px-2 py-0.5">
             <button
-              onClick={() => setZoom(z => Math.max(MIN_ZOOM, z - ZOOM_STEP * 2))}
+              onClick={() => { zoomRef.current = Math.max(MIN_ZOOM, zoomRef.current - ZOOM_STEP * 2); commitTransform(); }}
               className="mono text-[12px] text-white/70 hover:text-white w-4 text-center"
             >−</button>
             <span className="mono text-[9px] text-white/70 w-10 text-center font-bold">{zoomPct}%</span>
             <button
-              onClick={() => setZoom(z => Math.min(MAX_ZOOM, z + ZOOM_STEP * 2))}
+              onClick={() => { zoomRef.current = Math.min(MAX_ZOOM, zoomRef.current + ZOOM_STEP * 2); commitTransform(); }}
               className="mono text-[12px] text-white/70 hover:text-white w-4 text-center"
             >+</button>
           </div>
