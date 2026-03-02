@@ -1,86 +1,74 @@
-# Environment files
-.env
-.env.local
-.env.*.local
-*.env
-
-# Docker volumes
-postgres_data/
-redis_data/
-backend_static/
-backend_media/
-frontend_dist/
-
-# Logs
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
 # Backups
+# Certificates
+# Coverage reports
+# Docker override files
+# Docker volumes
+# Environment files
+# IDE files
+# Logs
+# Node
+# OS files
+# Python
+# Secrets
+# Temporary files
+# Terraform (if used later)
+# Testing
+*$py.class
+*.cover
+*.env
+*.log
+*.py[cod]
+*.secretpharos-arc-arrows
+*.so
+*.sublime-project
+*.sublime-workspace
+*.swo
+*.swp
+*.tfstate
+*.tfstate.*
+*.tmp
+*~
+.DS_Store
+.Python
+.coverage
+.coverage.*
+.env
+.env.*.local
+.env.local
+.idea/
+.phpunit.result.cache
+.pytest_cache/
+.temp/
+.terraform/
+.vscode/
+ENV/
+Thumbs.db
+__pycache__/
+backend_media/
+backend_static/
 backups/*.sql
 backups/*.tar.gz
 backups/*.zip
-
-# OS files
-.DS_Store
-Thumbs.db
-*.swp
-*.swo
-*~
-
-# IDE files
-.vscode/
-.idea/
-*.sublime-project
-*.sublime-workspace
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-venv/
-env/
-ENV/
-
-# Node
-node_modules/
-dist/
 build/
-
-# Certificates
-nginx/certs/*.pem
-nginx/certs/*.key
-nginx/certs/*.crt
-
-# Temporary files
-*.tmp
-.temp/
-tmp/
-
-# Coverage reports
-htmlcov/
-.coverage
-.coverage.*
 coverage.xml
-*.cover
-
-# Testing
-.pytest_cache/
-.phpunit.result.cache
-
-# Docker override files
-docker-compose.override.yml
+dist/
 docker-compose.*.override.yml
-
-# Terraform (if used later)
-*.tfstate
-*.tfstate.*
-.terraform/
-
-# Secrets
+docker-compose.override.yml
+env/
+frontend_dist/
+htmlcov/
+logs/
+nginx/certs/*.crt
+nginx/certs/*.key
+nginx/certs/*.pem
+node_modules/
+npm-debug.log*
+pharos-arc-arrows
+postgres_data/
+redis_data/
 secrets/
-*.secretpharos-arc-arrows
+tmp/
+venv/
+yarn-debug.log*
+yarn-error.log*

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import Link from 'next/link';
 import { CONFLICT_COLLECTIONS, RSS_FEEDS, type ConflictCollection } from '@/data/rssFeeds';
 import { ConflictBanner } from '@/components/news/ConflictBanner';
 import { ChannelView } from '@/components/news/ChannelView';
@@ -147,6 +148,12 @@ export default function NewsPage() {
             >
               ALL FEEDS
             </button>
+            <Link
+              href="/dashboard/data/news/timeline"
+              className="px-3 py-1 rounded text-[9px] mono font-bold tracking-wider text-[var(--t4)] hover:text-[var(--t2)] no-underline transition-colors"
+            >
+              TIMELINE →
+            </Link>
           </div>
         </div>
 
