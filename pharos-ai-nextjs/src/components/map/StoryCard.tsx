@@ -69,19 +69,15 @@ export default function StoryCard({ story, isOpen, onToggle, onFlyTo }: Props) {
     <div style={{ borderBottom: '1px solid var(--bd-s)' }}>
 
       {/* Header row */}
-      <button
+      <Button
+        variant="ghost"
         onClick={onToggle}
-        className="w-full text-left"
+        className="w-full text-left hover:bg-[var(--bg-1)] transition-colors rounded-none h-auto"
         style={{
           padding:    '12px 16px',
-          cursor:     'pointer',
           background: isOpen ? 'var(--bg-1)' : 'transparent',
-          border:     'none',
-          transition: 'background 0.15s',
           display:    'block',
         }}
-        onMouseEnter={e => { if (!isOpen) (e.currentTarget as HTMLElement).style.background = 'var(--bg-1)'; }}
-        onMouseLeave={e => { if (!isOpen) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
       >
         <div className="flex items-center gap-0">
           <StoryIcon iconName={story.iconName} category={story.category} size={15} boxSize={28} style={{ marginRight: 10 }} />
@@ -101,7 +97,7 @@ export default function StoryCard({ story, isOpen, onToggle, onFlyTo }: Props) {
             <span style={{ color: 'var(--t4)', fontSize: 12 }}>{isOpen ? '∨' : '›'}</span>
           </div>
         </div>
-      </button>
+      </Button>
 
       {/* Expanded body */}
       {isOpen && (

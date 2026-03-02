@@ -1,5 +1,7 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
+
 import { ACTOR_META, CATEGORY_LABEL, STATUS_META } from '@/data/mapTokens';
 import { STRIKE_ARCS, TARGETS } from '@/data/mapData';
 import { MAP_STORIES } from '@/data/mapStories';
@@ -85,11 +87,8 @@ export function RelatedStories({ stories, onActivate }: { stories: MapStory[]; o
       <SectionLabel>RELATED STORIES</SectionLabel>
       <div className="flex flex-col gap-1">
         {stories.map(story => (
-          <button key={story.id} onClick={() => onActivate(story)}
-            className="flex items-center gap-2 text-left w-full"
-            style={{ background: 'var(--bg-1)', border: '1px solid var(--bd-s)', borderRadius: 2, padding: '6px 8px', cursor: 'pointer' }}
-            onMouseEnter={e => ((e.currentTarget as HTMLElement).style.borderColor = 'var(--bd)')}
-            onMouseLeave={e => ((e.currentTarget as HTMLElement).style.borderColor = 'var(--bd-s)')}
+          <Button variant="ghost" key={story.id} onClick={() => onActivate(story)}
+            className="flex items-center gap-2 text-left w-full hover:border-[var(--bd)] transition-colors" style={{ background: 'var(--bg-1)', border: '1px solid var(--bd-s)', borderRadius: 2, padding: '6px 8px' }}
           >
             <StoryIcon iconName={story.iconName} category={story.category} size={12} boxSize={22} />
             <div className="flex-1 min-w-0">
@@ -97,7 +96,7 @@ export function RelatedStories({ stories, onActivate }: { stories: MapStory[]; o
               <p className="mono" style={{ fontSize: 9, color: ACTOR_META.US.cssVar, marginTop: 1 }}>{story.category}</p>
             </div>
             <span style={{ color: 'var(--t4)', fontSize: 10 }}>›</span>
-          </button>
+          </Button>
         ))}
       </div>
     </>
@@ -129,11 +128,8 @@ export function StrikeContent({ d, onSelectItem, onActivateStory }: {
         <>
           <Divider />
           <SectionLabel>TARGET HIT</SectionLabel>
-          <button onClick={() => onSelectItem({ type: 'target', data: relatedTarget })}
-            className="flex items-center gap-2 w-full text-left"
-            style={{ background: 'var(--bg-1)', border: '1px solid var(--bd-s)', borderRadius: 2, padding: '8px 10px', cursor: 'pointer' }}
-            onMouseEnter={e => ((e.currentTarget as HTMLElement).style.borderColor = 'var(--bd)')}
-            onMouseLeave={e => ((e.currentTarget as HTMLElement).style.borderColor = 'var(--bd-s)')}
+          <Button variant="ghost" onClick={() => onSelectItem({ type: 'target', data: relatedTarget })}
+            className="flex items-center gap-2 w-full text-left hover:border-[var(--bd)] transition-colors" style={{ background: 'var(--bg-1)', border: '1px solid var(--bd-s)', borderRadius: 2, padding: '8px 10px' }}
           >
             <span className="dot" style={{ background: STATUS_META[relatedTarget.status].cssVar }} />
             <div className="flex-1 min-w-0">
@@ -143,7 +139,7 @@ export function StrikeContent({ d, onSelectItem, onActivateStory }: {
               </p>
             </div>
             <span style={{ color: 'var(--t4)' }}>›</span>
-          </button>
+          </Button>
         </>
       )}
       <RelatedStories stories={relatedStories} onActivate={onActivateStory} />
@@ -209,11 +205,8 @@ export function TargetContent({ d, onSelectItem, onActivateStory }: {
           <SectionLabel>INCOMING STRIKES ({incomingStrikes.length})</SectionLabel>
           <div className="flex flex-col gap-1">
             {incomingStrikes.map(strike => (
-              <button key={strike.id} onClick={() => onSelectItem({ type: 'strike', data: strike })}
-                className="flex items-center gap-2 w-full text-left"
-                style={{ background: 'var(--bg-1)', border: '1px solid var(--bd-s)', borderRadius: 2, padding: '6px 8px', cursor: 'pointer' }}
-                onMouseEnter={e => ((e.currentTarget as HTMLElement).style.borderColor = 'var(--bd)')}
-                onMouseLeave={e => ((e.currentTarget as HTMLElement).style.borderColor = 'var(--bd-s)')}
+              <Button variant="ghost" key={strike.id} onClick={() => onSelectItem({ type: 'strike', data: strike })}
+                className="flex items-center gap-2 w-full text-left hover:border-[var(--bd)] transition-colors" style={{ background: 'var(--bg-1)', border: '1px solid var(--bd-s)', borderRadius: 2, padding: '6px 8px' }}
               >
                 <div style={{ width: 10, height: 3, background: ACTOR_META[strike.actor].cssVar, flexShrink: 0 }} />
                 <div className="flex-1 min-w-0">
@@ -223,7 +216,7 @@ export function TargetContent({ d, onSelectItem, onActivateStory }: {
                   </p>
                 </div>
                 <span style={{ color: 'var(--t4)' }}>›</span>
-              </button>
+              </Button>
             ))}
           </div>
         </>

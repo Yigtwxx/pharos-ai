@@ -1,5 +1,7 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
+
 import { StrikeContent, MissileContent, TargetContent, AssetContent, ZoneContent } from './MapDetailContent';
 
 import type { StrikeArc, MissileTrack, Target, Asset, ThreatZone } from '@/data/mapData';
@@ -74,14 +76,9 @@ export default function MapDetailPanel({ item, onClose, onSelectItem, onActivate
                 {getTitle(item)}
               </p>
             </div>
-            <button
-              onClick={onClose}
-              style={{ background: 'transparent', border: 'none', color: 'var(--t4)', cursor: 'pointer', fontSize: 16, lineHeight: 1, padding: 4, flexShrink: 0 }}
-              onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = 'var(--t2)')}
-              onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = 'var(--t4)')}
-            >
-              ✕
-            </button>
+            <Button variant="ghost" size="xs" onClick={onClose}
+              className="h-5 w-5 p-0 text-[var(--t4)] hover:text-[var(--t2)] text-base leading-none shrink-0"
+            >✕</Button>
           </div>
 
           {/* Body */}

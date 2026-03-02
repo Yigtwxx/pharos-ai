@@ -26,7 +26,7 @@ const CATEGORY_BG: Record<string, string> = {
   DIPLOMATIC:  'rgba(76,232,168,0.15)',
 };
 
-interface StoryIconProps {
+type Props = {
   iconName: string;
   category: string;
   size?: number;          // icon px size, default 16
@@ -40,7 +40,7 @@ export default function StoryIcon({
   size = 16,
   boxSize = 28,
   style,
-}: StoryIconProps) {
+}: Props) {
   const Icon = ICON_MAP[iconName] ?? AlertTriangle;
   const color = CATEGORY_COLOR[category] ?? '#8F99A8';
   const bg    = CATEGORY_BG[category]    ?? 'rgba(143,153,168,0.12)';

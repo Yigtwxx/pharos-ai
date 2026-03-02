@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+import { Button } from '@/components/ui/button';
+
 import StoryCard from './StoryCard';
 import StoryTimeline from './StoryTimeline';
 
@@ -58,10 +60,9 @@ export default function MapSidebar({ isOpen, activeStory, onToggle, onActivateSt
           background: 'var(--blue-dim)', color: 'var(--blue-l)',
           fontSize: 9, fontWeight: 700, padding: '2px 6px', borderRadius: 10, marginLeft: 2,
         }}>{MAP_STORIES.length}</span>
-        <button
-          onClick={onToggle}
-          style={{ marginLeft: 'auto', background: 'transparent', border: 'none', color: 'var(--t4)', cursor: 'pointer', fontSize: 16, lineHeight: 1, padding: '0 2px' }}
-        >‹</button>
+        <Button variant="ghost" size="xs" onClick={onToggle}
+          className="ml-auto h-5 w-5 p-0 text-[var(--t4)] text-base leading-none"
+        >‹</Button>
       </div>
 
       {/* Timeline */}
