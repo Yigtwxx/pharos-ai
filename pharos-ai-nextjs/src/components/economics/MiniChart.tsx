@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { createChart, type IChartApi, type ISeriesApi, ColorType, LineStyle } from 'lightweight-charts';
+import { createChart, type IChartApi, ColorType, LineStyle } from 'lightweight-charts';
 
 interface MiniChartProps {
   data: { time: number; value: number }[];
@@ -13,7 +13,7 @@ interface MiniChartProps {
 export function MiniChart({ data, color, positive, height = 80 }: MiniChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
-  const seriesRef = useRef<ISeriesApi<'Area'> | null>(null);
+  const seriesRef = useRef<any>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -56,7 +56,7 @@ export function MiniChart({ data, color, positive, height = 80 }: MiniChartProps
     const topColor = positive ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)';
     const bottomColor = 'rgba(0,0,0,0)';
 
-    const series = chart.addAreaSeries({
+    const series = (chart as any).addSeries('Area', {
       lineColor,
       topColor,
       bottomColor,

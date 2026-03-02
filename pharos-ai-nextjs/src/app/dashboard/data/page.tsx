@@ -11,6 +11,14 @@ const DATA_SOURCES = [
     status: 'LIVE',
     color: '#ef4444',
   },
+  {
+    href: '/dashboard/data/economics',
+    label: 'ECONOMIC INDICATORS',
+    description: '15 conflict-relevant market indexes — oil, gold, VIX, defense, currencies, shipping. Live charts via Yahoo Finance.',
+    count: '15 indexes',
+    status: 'LIVE',
+    color: '#f59e0b',
+  },
   // Future data sources
   {
     href: '#',

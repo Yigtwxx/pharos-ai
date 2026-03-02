@@ -45,31 +45,33 @@ const PERSPECTIVE_COLORS: Record<string, string> = {
 // ─── Tier → vertical distance from spine ──────────────────────
 
 const TIER_Y_OFFSET: Record<number, number> = {
-  1: 10,
-  2: 70,
-  3: 150,
-  4: 230,
+  1: 12,
+  2: 80,
+  3: 160,
+  4: 240,
 };
 
 const TIER_LABELS: Record<number, string> = {
-  1: 'WIRE / PRIMARY',
-  2: 'MAJOR GLOBAL',
+  1: 'WIRE',
+  2: 'MAJOR',
   3: 'REGIONAL',
-  4: 'STATE / NICHE',
+  4: 'STATE',
 };
 
 // Layout
-const CARD_W = 240;
-const CARD_GAP = 14;
+const CARD_W = 260;
+const CARD_GAP = 16;
 const TIME_SLOT_W = CARD_W + CARD_GAP;
-const IMG_H = 110;
-const PADDING_X = 120;
-const SPINE_Y_BASE = 450; // base spine Y in canvas coords (enough room above)
+const IMG_H = 100;
+const PADDING_X = 140;
+const SPINE_Y = 500;
+const CANVAS_H = SPINE_Y * 2 + 100;
 
 // Zoom
-const MIN_ZOOM = 0.25;
-const MAX_ZOOM = 1.5;
-const ZOOM_STEP = 0.08;
+const MIN_ZOOM = 0.35;
+const MAX_ZOOM = 1.2;
+const ZOOM_STEP = 0.06;
+const DEFAULT_ZOOM = 0.65;
 
 // ─── Helpers ──────────────────────────────────────────────────
 
@@ -87,30 +89,32 @@ function formatTimeAgo(d: Date): string {
   return `${Math.floor(hrs / 24)}d`;
 }
 
+/** Proxy image through our cache to avoid rate limiting */
+function proxyImg(url: string): string {
+  return `/api/img?url=${encodeURIComponent(url)}`;
+}
+
 // ─── Component ────────────────────────────────────────────────
 
 export function NewsTimeline({ feedData }: NewsTimelineProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [selectedTiers, setSelectedTiers] = useState<Set<number>>(new Set([1, 2, 3, 4]));
   const viewportRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Canvas transform state
-  const [zoom, setZoom] = useState(0.75);
+  const [zoom, setZoom] = useState(DEFAULT_ZOOM);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
-  const dragState = useRef({ active: false, startX: 0, startY: 0, panX: 0, panY: 0 });
+  const dragState = useRef({ active: false, startX: 0, startY: 0, panX: 0, panY: 0, moved: false });
+  const initialCenterDone = useRef(false);
 
-  const spineY = SPINE_Y_BASE;
-
-  // ─── Mouse drag to pan ──────────────────────────────────────
+  // ─── Drag to pan ────────────────────────────────────────────
   useEffect(() => {
     const el = viewportRef.current;
     if (!el) return;
 
     const onDown = (e: MouseEvent) => {
       if ((e.target as HTMLElement).closest('a')) return;
-      dragState.current = { active: true, startX: e.clientX, startY: e.clientY, panX: pan.x, panY: pan.y };
+      dragState.current = { active: true, startX: e.clientX, startY: e.clientY, panX: pan.x, panY: pan.y, moved: false };
       setIsDragging(true);
       e.preventDefault();
     };
@@ -119,13 +123,12 @@ export function NewsTimeline({ feedData }: NewsTimelineProps) {
       if (!dragState.current.active) return;
       const dx = e.clientX - dragState.current.startX;
       const dy = e.clientY - dragState.current.startY;
+      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragState.current.moved = true;
       setPan({ x: dragState.current.panX + dx, y: dragState.current.panY + dy });
     };
 
     const onClick = (e: MouseEvent) => {
-      const dx = Math.abs(e.clientX - dragState.current.startX);
-      const dy = Math.abs(e.clientY - dragState.current.startY);
-      if (dx > 5 || dy > 5) {
+      if (dragState.current.moved) {
         e.preventDefault();
         e.stopPropagation();
       }
@@ -140,7 +143,6 @@ export function NewsTimeline({ feedData }: NewsTimelineProps) {
     el.addEventListener('click', onClick, true);
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
-
     return () => {
       el.removeEventListener('mousedown', onDown);
       el.removeEventListener('click', onClick, true);
@@ -149,7 +151,7 @@ export function NewsTimeline({ feedData }: NewsTimelineProps) {
     };
   }, [pan.x, pan.y]);
 
-  // ─── Scroll to zoom (centered on mouse) ────────────────────
+  // ─── Scroll to zoom ────────────────────────────────────────
   useEffect(() => {
     const el = viewportRef.current;
     if (!el) return;
@@ -160,11 +162,11 @@ export function NewsTimeline({ feedData }: NewsTimelineProps) {
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
 
-      const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
-      const newZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom + delta));
-      const scale = newZoom / zoom;
+      const direction = e.deltaY > 0 ? -1 : 1;
+      const newZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, zoom + direction * ZOOM_STEP));
+      if (newZoom === zoom) return;
 
-      // Adjust pan so zoom centers on mouse position
+      const scale = newZoom / zoom;
       setPan(prev => ({
         x: mouseX - scale * (mouseX - prev.x),
         y: mouseY - scale * (mouseY - prev.y),
@@ -217,7 +219,7 @@ export function NewsTimeline({ feedData }: NewsTimelineProps) {
 
     for (const article of filtered) {
       const tier = article.feed.tier;
-      const yOffset = TIER_Y_OFFSET[tier] ?? 150;
+      const yOffset = TIER_Y_OFFSET[tier] ?? 160;
       const above = globalIdx % 2 === 0;
       const laneKey = `${above ? 'a' : 'b'}-${tier}`;
 
@@ -237,27 +239,44 @@ export function NewsTimeline({ feedData }: NewsTimelineProps) {
     }
 
     const totalWidth = Math.max(PADDING_X * 2 + (globalIdx + 1) * TIME_SLOT_W, 1200);
-    const totalHeight = spineY * 2 + 100;
+    return { positioned, hourMarkers, totalWidth };
+  }, [filtered]);
 
-    return { positioned, hourMarkers, totalWidth, totalHeight };
-  }, [filtered, spineY]);
-
-  // ─── Center on newest article on mount ──────────────────────
-  useEffect(() => {
+  // ─── Center on newest ───────────────────────────────────────
+  const centerOnNewest = useCallback(() => {
     const vp = viewportRef.current;
     if (!vp || layout.positioned.length === 0) return;
     const rect = vp.getBoundingClientRect();
-    const lastCard = layout.positioned[layout.positioned.length - 1];
-    const targetX = lastCard.x + CARD_W / 2;
+    const last = layout.positioned[layout.positioned.length - 1];
+    const targetX = last.x + CARD_W / 2;
+    const z = zoom;
+    setPan({
+      x: rect.width - targetX * z - 200,
+      y: (rect.height / 2) - SPINE_Y * z,
+    });
+  }, [layout, zoom]);
 
+  // Initial center
+  useEffect(() => {
+    if (initialCenterDone.current || layout.positioned.length === 0) return;
+    initialCenterDone.current = true;
+    requestAnimationFrame(centerOnNewest);
+  }, [layout.positioned.length, centerOnNewest]);
+
+  const resetView = useCallback(() => {
+    setZoom(DEFAULT_ZOOM);
     requestAnimationFrame(() => {
+      const vp = viewportRef.current;
+      if (!vp || layout.positioned.length === 0) return;
+      const rect = vp.getBoundingClientRect();
+      const last = layout.positioned[layout.positioned.length - 1];
+      const targetX = last.x + CARD_W / 2;
       setPan({
-        x: rect.width - targetX * zoom - 100,
-        y: (rect.height / 2) - spineY * zoom,
+        x: rect.width - targetX * DEFAULT_ZOOM - 200,
+        y: (rect.height / 2) - SPINE_Y * DEFAULT_ZOOM,
       });
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [layout.positioned.length > 0]);
+  }, [layout]);
 
   const toggleTier = useCallback((tier: number) => {
     setSelectedTiers(prev => {
@@ -268,38 +287,37 @@ export function NewsTimeline({ feedData }: NewsTimelineProps) {
     });
   }, []);
 
-  // Reset view
-  const resetView = useCallback(() => {
-    const vp = viewportRef.current;
-    if (!vp) return;
-    const rect = vp.getBoundingClientRect();
-    const lastCard = layout.positioned[layout.positioned.length - 1];
-    const targetX = lastCard ? lastCard.x + CARD_W / 2 : layout.totalWidth / 2;
-    setZoom(0.75);
-    setPan({
-      x: rect.width - targetX * 0.75 - 100,
-      y: (rect.height / 2) - spineY * 0.75,
-    });
-  }, [layout, spineY]);
-
   const zoomPct = Math.round(zoom * 100);
 
+  // ─── Viewport culling for performance ───────────────────────
+  const visibleCards = useMemo(() => {
+    const vp = viewportRef.current;
+    if (!vp) return layout.positioned;
+    const rect = vp.getBoundingClientRect();
+    // Calculate visible canvas region
+    const viewLeft = -pan.x / zoom - 200;
+    const viewRight = (-pan.x + rect.width) / zoom + 200;
+    return layout.positioned.filter(({ x }) => {
+      return x + CARD_W > viewLeft && x < viewRight;
+    });
+  }, [layout.positioned, pan.x, zoom]);
+
   return (
-    <div ref={containerRef} className="flex flex-col w-full h-full min-h-0">
+    <div className="flex flex-col w-full h-full min-h-0">
       {/* Header */}
-      <div className="px-5 py-2 bg-[var(--bg-2)] border-b border-[var(--bd)] flex items-center gap-4 shrink-0 z-10">
-        <span className="mono text-[10px] font-bold text-[var(--t2)] tracking-wider">TIMELINE</span>
-        <div className="w-px h-4 bg-[var(--bd)]" />
+      <div className="px-5 py-2 bg-[var(--bg-2)] border-b border-[var(--bd)] flex items-center gap-3 shrink-0 z-10">
+        <span className="mono text-[11px] font-bold text-white tracking-wider">TIMELINE</span>
+        <div className="w-px h-4 bg-white/20" />
 
         <div className="flex gap-1">
           {[1, 2, 3, 4].map(tier => (
             <button
               key={tier}
               onClick={() => toggleTier(tier)}
-              className={`px-2 py-1 rounded text-[8px] mono font-bold tracking-wider transition-colors
+              className={`px-2 py-1 rounded text-[9px] mono font-bold tracking-wider transition-colors
                 ${selectedTiers.has(tier)
-                  ? 'bg-white/10 text-white border border-white/20'
-                  : 'text-[var(--t4)] border border-transparent hover:text-[var(--t2)]'
+                  ? 'bg-white/15 text-white border border-white/30'
+                  : 'text-white/40 border border-transparent hover:text-white/70'
                 }`}
             >
               T{tier} {TIER_LABELS[tier]}
@@ -308,25 +326,30 @@ export function NewsTimeline({ feedData }: NewsTimelineProps) {
         </div>
 
         <div className="ml-auto flex items-center gap-3">
-          {/* Zoom controls */}
-          <div className="flex items-center gap-1.5 border border-[var(--bd)] rounded px-2 py-0.5">
+          <div className="flex items-center gap-1.5 border border-white/20 rounded px-2 py-0.5">
             <button
               onClick={() => setZoom(z => Math.max(MIN_ZOOM, z - ZOOM_STEP * 2))}
-              className="mono text-[11px] text-[var(--t3)] hover:text-white w-4 text-center"
+              className="mono text-[12px] text-white/70 hover:text-white w-4 text-center"
             >−</button>
-            <span className="mono text-[8px] text-[var(--t4)] w-8 text-center">{zoomPct}%</span>
+            <span className="mono text-[9px] text-white/70 w-10 text-center font-bold">{zoomPct}%</span>
             <button
               onClick={() => setZoom(z => Math.min(MAX_ZOOM, z + ZOOM_STEP * 2))}
-              className="mono text-[11px] text-[var(--t3)] hover:text-white w-4 text-center"
+              className="mono text-[12px] text-white/70 hover:text-white w-4 text-center"
             >+</button>
           </div>
           <button
+            onClick={centerOnNewest}
+            className="mono text-[9px] font-bold text-white/70 hover:text-white transition-colors px-2 py-1 border border-white/20 rounded"
+          >
+            → LATEST
+          </button>
+          <button
             onClick={resetView}
-            className="mono text-[8px] text-[var(--t4)] hover:text-[var(--t2)] transition-colors"
+            className="mono text-[9px] text-white/50 hover:text-white transition-colors"
           >
             RESET
           </button>
-          <span className="mono text-[8px] text-[var(--t4)]">{filtered.length} articles</span>
+          <span className="mono text-[9px] font-bold text-white/60">{filtered.length} articles</span>
         </div>
       </div>
 
@@ -336,10 +359,11 @@ export function NewsTimeline({ feedData }: NewsTimelineProps) {
         className="flex-1 min-h-0 overflow-hidden relative"
         style={{
           cursor: isDragging ? 'grabbing' : 'grab',
-          userSelect: isDragging ? 'none' : 'auto',
+          userSelect: 'none',
+          background: '#0a0a0f',
         }}
       >
-        {/* Dot grid background — fixed to viewport, moves with pan */}
+        {/* Dot grid */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -349,42 +373,39 @@ export function NewsTimeline({ feedData }: NewsTimelineProps) {
           }}
         />
 
-        {/* Transformed canvas layer */}
+        {/* Canvas layer */}
         <div
           style={{
             transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
             transformOrigin: '0 0',
             position: 'absolute',
             width: `${layout.totalWidth}px`,
-            height: `${layout.totalHeight}px`,
+            height: `${CANVAS_H}px`,
+            willChange: 'transform',
           }}
         >
-          {/* ─── Horizontal spine ─── */}
-          <div className="absolute left-0 right-0" style={{ top: `${spineY}px` }}>
-            <div className="absolute inset-x-0 h-[2px] bg-white/20" />
-            <div
-              className="absolute inset-x-0 h-[2px]"
-              style={{ boxShadow: '0 0 16px rgba(255,255,255,0.06), 0 0 4px rgba(255,255,255,0.12)' }}
-            />
-          </div>
+          {/* ─── Spine ─── */}
+          <div
+            className="absolute left-0 right-0 h-[3px] bg-white/20"
+            style={{ top: `${SPINE_Y}px` }}
+          />
 
           {/* Axis labels */}
           <div
-            className="absolute mono text-[10px] text-white/50 tracking-widest font-bold"
-            style={{ top: `${spineY - 28}px`, left: '20px' }}
+            className="absolute mono text-[12px] text-white/60 tracking-widest font-bold"
+            style={{ top: `${SPINE_Y - 30}px`, left: '24px' }}
           >
             ▲ IMPORTANT
           </div>
           <div
-            className="absolute mono text-[10px] text-white/50 tracking-widest font-bold"
-            style={{ top: `${spineY + 16}px`, left: '20px' }}
+            className="absolute mono text-[12px] text-white/60 tracking-widest font-bold"
+            style={{ top: `${SPINE_Y + 16}px`, left: '24px' }}
           >
             ▼ NICHE
           </div>
-
           <div
-            className="absolute mono text-[10px] text-white/50 font-bold"
-            style={{ top: `${spineY - 6}px`, right: '30px' }}
+            className="absolute mono text-[12px] text-white/60 font-bold"
+            style={{ top: `${SPINE_Y - 8}px`, right: '30px' }}
           >
             NOW →
           </div>
@@ -392,75 +413,72 @@ export function NewsTimeline({ feedData }: NewsTimelineProps) {
           {/* ─── Hour markers ─── */}
           {layout.hourMarkers.map(({ hour, x }) => (
             <div key={hour.toISOString()}>
-              {/* Full-height column line */}
               <div
-                className="absolute w-px bg-white/[0.06]"
+                className="absolute w-px bg-white/[0.08]"
                 style={{ left: `${x}px`, top: '0', bottom: '0' }}
               />
-              {/* Time label ABOVE spine */}
+              {/* Above spine */}
               <div
-                className="absolute mono text-[14px] font-bold text-white/70 whitespace-nowrap"
-                style={{ left: `${x - 20}px`, top: `${spineY - 40}px` }}
+                className="absolute mono text-[16px] font-bold text-white whitespace-nowrap"
+                style={{ left: `${x - 22}px`, top: `${SPINE_Y - 50}px` }}
               >
                 {formatHour(hour)}
               </div>
-              {/* Time label BELOW spine (mirror) */}
+              {/* Below spine */}
               <div
-                className="absolute mono text-[14px] font-bold text-white/70 whitespace-nowrap"
-                style={{ left: `${x - 20}px`, top: `${spineY + 20}px` }}
+                className="absolute mono text-[16px] font-bold text-white whitespace-nowrap"
+                style={{ left: `${x - 22}px`, top: `${SPINE_Y + 26}px` }}
               >
                 {formatHour(hour)}
               </div>
-              {/* Large dot on spine */}
+              {/* Dot */}
               <div
-                className="absolute w-4 h-4 rounded-full bg-[var(--bg-app)] border-2 border-white/40"
-                style={{ left: `${x - 8}px`, top: `${spineY - 8}px` }}
+                className="absolute w-5 h-5 rounded-full bg-[#0a0a0f] border-[3px] border-white/50"
+                style={{ left: `${x - 10}px`, top: `${SPINE_Y - 9}px` }}
               />
             </div>
           ))}
 
-          {/* ─── Article cards ─── */}
-          {layout.positioned.map(({ article, x, above, yOffset }) => {
+          {/* ─── Cards (only visible ones for perf) ─── */}
+          {visibleCards.map(({ article, x, above, yOffset }) => {
             const color = PERSPECTIVE_COLORS[article.feed.perspective] ?? '#6b7280';
             const isHovered = hoveredId === article.id;
             const hasImg = !!article.imageUrl;
-            const cardH = hasImg ? IMG_H + 80 : 90;
+            const cardH = hasImg ? IMG_H + 90 : 100;
 
             const cardTop = above
-              ? spineY - yOffset - cardH
-              : spineY + yOffset + 18;
+              ? SPINE_Y - yOffset - cardH
+              : SPINE_Y + yOffset + 20;
 
-            const connectorTop = above ? cardTop + cardH : spineY + 2;
-            const connectorH = above ? spineY - (cardTop + cardH) : cardTop - spineY - 2;
+            const connectorTop = above ? cardTop + cardH : SPINE_Y + 2;
+            const connectorH = above ? SPINE_Y - (cardTop + cardH) : cardTop - SPINE_Y - 2;
             const cardCenter = x + CARD_W / 2;
 
             return (
               <div key={article.id}>
                 {/* Connector */}
                 <div
-                  className="absolute transition-opacity duration-200"
+                  className="absolute"
                   style={{
                     left: `${cardCenter}px`,
                     top: `${connectorTop}px`,
-                    width: '1px',
+                    width: '2px',
                     height: `${Math.max(connectorH, 0)}px`,
                     backgroundColor: color,
-                    opacity: isHovered ? 0.7 : 0.25,
+                    opacity: isHovered ? 0.8 : 0.3,
                   }}
                 />
                 {/* Spine dot */}
                 <div
-                  className="absolute rounded-full transition-all duration-200"
+                  className="absolute rounded-full"
                   style={{
-                    left: `${cardCenter - 4}px`,
-                    top: `${spineY - 4}px`,
-                    width: isHovered ? '12px' : '8px',
-                    height: isHovered ? '12px' : '8px',
-                    marginLeft: isHovered ? '-2px' : '0',
-                    marginTop: isHovered ? '-2px' : '0',
+                    left: `${cardCenter - 5}px`,
+                    top: `${SPINE_Y - 5}px`,
+                    width: '10px',
+                    height: '10px',
                     backgroundColor: color,
-                    opacity: isHovered ? 1 : 0.6,
-                    boxShadow: isHovered ? `0 0 12px ${color}80` : 'none',
+                    opacity: isHovered ? 1 : 0.7,
+                    boxShadow: isHovered ? `0 0 14px ${color}` : 'none',
                   }}
                 />
 
@@ -475,61 +493,61 @@ export function NewsTimeline({ feedData }: NewsTimelineProps) {
                   onMouseLeave={() => setHoveredId(null)}
                 >
                   <div
-                    className={`rounded-lg border transition-all duration-200 overflow-hidden
+                    className={`rounded-lg border overflow-hidden transition-shadow duration-150
                       ${isHovered
-                        ? 'bg-[var(--bg-2)] border-white/20 shadow-2xl shadow-black/40 scale-[1.03]'
-                        : 'bg-[var(--bg-1)] border-[var(--bd)] hover:border-white/10'
+                        ? 'bg-[#1a1a24] border-white/30 shadow-2xl shadow-black/50'
+                        : 'bg-[#111118] border-white/15'
                       }`}
                   >
                     {hasImg && (
-                      <div className="w-full overflow-hidden bg-[var(--bg-2)]" style={{ height: `${IMG_H}px` }}>
+                      <div className="w-full overflow-hidden bg-[#0a0a0f]" style={{ height: `${IMG_H}px` }}>
                         <img
-                          src={article.imageUrl}
+                          src={proxyImg(article.imageUrl!)}
                           alt=""
-                          className={`w-full h-full object-cover transition-all duration-200 ${isHovered ? 'opacity-100 scale-[1.02]' : 'opacity-80'}`}
+                          className="w-full h-full object-cover"
                           loading="lazy"
                           onError={(e) => { (e.target as HTMLImageElement).parentElement!.style.display = 'none'; }}
                         />
                       </div>
                     )}
                     <div className="px-3 py-2.5">
-                      {/* Source + timestamp row */}
+                      {/* Source + time */}
                       <div className="flex items-center gap-2 mb-1.5">
                         <div
                           className="px-1.5 py-0.5 rounded text-[8px] mono font-bold leading-none"
-                          style={{ backgroundColor: `${color}25`, color, border: `1px solid ${color}40` }}
+                          style={{ backgroundColor: `${color}30`, color, border: `1px solid ${color}50` }}
                         >
                           {article.feed.name.length > 14 ? article.feed.id.toUpperCase() : article.feed.name.toUpperCase()}
                         </div>
                         {article.feed.stateFunded && (
-                          <span className="text-[7px] mono font-bold text-amber-400 tracking-wider">STATE</span>
+                          <span className="text-[8px] mono font-bold text-amber-400 tracking-wider">STATE</span>
                         )}
-                        <span className="mono text-[9px] font-bold text-white/80 ml-auto shrink-0">
+                        <span className="mono text-[11px] font-bold text-white ml-auto shrink-0">
                           {formatHour(article.time)}
                         </span>
-                        <span className="mono text-[8px] text-white/50 shrink-0">
+                        <span className="mono text-[9px] text-white/70 shrink-0">
                           {formatTimeAgo(article.time)}
                         </span>
                       </div>
                       {/* Title */}
-                      <h4 className="text-[12px] text-white font-medium leading-snug group-hover:text-white line-clamp-2">
+                      <h4 className="text-[12px] text-white font-semibold leading-snug line-clamp-2">
                         {article.title}
                       </h4>
-                      {/* Snippet — always visible, not just on hover */}
+                      {/* Snippet */}
                       {article.snippet && (
-                        <p className="text-[10px] text-white/60 mt-1 leading-relaxed line-clamp-2">
+                        <p className="text-[10px] text-white/70 mt-1 leading-relaxed line-clamp-2">
                           {article.snippet}
                         </p>
                       )}
-                      {/* Country + tier */}
-                      <div className="flex items-center gap-2 mt-1.5">
-                        <span className="text-[8px] mono font-bold text-white/50">{article.feed.country}</span>
+                      {/* Meta */}
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="text-[9px] mono font-bold text-white/60">{article.feed.country}</span>
                         <div className="flex gap-0.5">
                           {Array.from({ length: 5 - article.feed.tier }).map((_, i) => (
-                            <div key={i} className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color, opacity: 0.8 }} />
+                            <div key={i} className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color }} />
                           ))}
                           {Array.from({ length: article.feed.tier - 1 }).map((_, i) => (
-                            <div key={i} className="w-1.5 h-1.5 rounded-full bg-white/15" />
+                            <div key={i} className="w-1.5 h-1.5 rounded-full bg-white/20" />
                           ))}
                         </div>
                       </div>
@@ -541,13 +559,13 @@ export function NewsTimeline({ feedData }: NewsTimelineProps) {
           })}
 
           {filtered.length === 0 && (
-            <div className="absolute" style={{ top: `${spineY - 20}px`, left: '100px' }}>
-              <span className="mono text-[11px] text-[var(--t4)]">No articles for selected tiers</span>
+            <div className="absolute" style={{ top: `${SPINE_Y - 20}px`, left: '100px' }}>
+              <span className="mono text-[13px] text-white/60">No articles for selected tiers</span>
             </div>
           )}
         </div>
 
-        {/* ─── Zoom level indicator (bottom-left) ─── */}
+        {/* Bottom-left hint */}
         <div className="absolute bottom-4 left-4 mono text-[10px] text-white/40 pointer-events-none">
           {zoomPct}% · scroll to zoom · drag to pan
         </div>
