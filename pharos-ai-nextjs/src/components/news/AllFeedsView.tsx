@@ -19,7 +19,11 @@ const PERSPECTIVE_COLORS: Record<string, string> = {
   INTL_ORG: '#6366f1',
 };
 
-export function AllFeedsView() {
+interface AllFeedsViewProps {
+  showImages: boolean;
+}
+
+export function AllFeedsView({ showImages }: AllFeedsViewProps) {
   const [filter, setFilter] = useState<string>('ALL');
 
   const filtered = useMemo(
@@ -55,15 +59,18 @@ export function AllFeedsView() {
         </span>
       </div>
 
-      {/* Feed columns — horizontal scroll */}
-      <div className="flex-1 flex overflow-x-auto min-h-0">
-        {filtered.map(feed => (
-          <NewsFeedColumn
-            key={feed.id}
-            feed={feed}
-            color={PERSPECTIVE_COLORS[feed.perspective] ?? '#6b7280'}
-          />
-        ))}
+      {/* Feed columns — horizontal scroll, each col has fixed min-width */}
+      <div className="flex-1 overflow-x-auto overflow-y-hidden min-h-0">
+        <div className="flex min-h-full" style={{ minWidth: `${filtered.length * 320}px` }}>
+          {filtered.map(feed => (
+            <NewsFeedColumn
+              key={feed.id}
+              feed={feed}
+              color={PERSPECTIVE_COLORS[feed.perspective] ?? '#6b7280'}
+              showImages={showImages}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

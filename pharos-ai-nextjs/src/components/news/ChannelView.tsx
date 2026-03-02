@@ -6,15 +6,16 @@ import { NewsFeedColumn } from './NewsFeedColumn';
 
 interface ChannelViewProps {
   channel: ConflictChannel;
+  showImages: boolean;
 }
 
-export function ChannelView({ channel }: ChannelViewProps) {
+export function ChannelView({ channel, showImages }: ChannelViewProps) {
   const feeds = getFeedsForChannel(channel.feedIds);
 
   return (
     <div className="flex-1 flex flex-col min-h-0">
       {/* Channel description bar */}
-      <div className="px-5 py-2 bg-[var(--bg-2)] border-b border-[var(--bd)] flex items-center gap-3">
+      <div className="px-5 py-2 bg-[var(--bg-2)] border-b border-[var(--bd)] flex items-center gap-3 shrink-0">
         <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: channel.color }} />
         <div>
           <span className="mono text-[10px] font-bold text-[var(--t2)] tracking-wider">
@@ -29,10 +30,10 @@ export function ChannelView({ channel }: ChannelViewProps) {
         </div>
       </div>
 
-      {/* Feed columns */}
-      <div className="flex-1 flex overflow-x-auto min-h-0">
+      {/* Feed columns — equal width, full stretch */}
+      <div className="flex-1 flex min-h-0" style={{ display: 'grid', gridTemplateColumns: `repeat(${feeds.length}, 1fr)` }}>
         {feeds.map(feed => (
-          <NewsFeedColumn key={feed.id} feed={feed} color={channel.color} />
+          <NewsFeedColumn key={feed.id} feed={feed} color={channel.color} showImages={showImages} />
         ))}
       </div>
     </div>

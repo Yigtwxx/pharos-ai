@@ -11,6 +11,7 @@ interface FeedItem {
   creator?: string;
   isoDate?: string;
   categories?: string[];
+  imageUrl?: string;
 }
 
 interface FeedResult {
@@ -23,6 +24,7 @@ interface FeedResult {
 interface NewsFeedColumnProps {
   feed: RssFeed;
   color: string;
+  showImages?: boolean;
 }
 
 function timeAgo(dateStr: string): string {
@@ -38,7 +40,7 @@ function timeAgo(dateStr: string): string {
   return `${days}d ago`;
 }
 
-export function NewsFeedColumn({ feed, color }: NewsFeedColumnProps) {
+export function NewsFeedColumn({ feed, color, showImages = false }: NewsFeedColumnProps) {
   const [items, setItems] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -69,7 +71,7 @@ export function NewsFeedColumn({ feed, color }: NewsFeedColumnProps) {
   }, [feed.id]);
 
   return (
-    <div className="flex flex-col min-w-[300px] max-w-[380px] flex-1 border-r border-[var(--bd)] last:border-r-0">
+    <div className="flex flex-col w-full min-w-0 flex-1 border-r border-[var(--bd)] last:border-r-0">
       {/* Column header */}
       <div className="px-4 py-3 border-b border-[var(--bd)] bg-[var(--bg-1)] flex items-center gap-2 shrink-0">
         <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
@@ -86,8 +88,8 @@ export function NewsFeedColumn({ feed, color }: NewsFeedColumnProps) {
             )}
           </div>
         </div>
-        <span className="text-[9px] mono text-[var(--t4)]">
-          {items.length > 0 ? `${items.length} items` : ''}
+        <span className="text-[9px] mono text-[var(--t4)] shrink-0">
+          {items.length > 0 ? `${items.length}` : ''}
         </span>
       </div>
 
@@ -102,7 +104,7 @@ export function NewsFeedColumn({ feed, color }: NewsFeedColumnProps) {
         {error && (
           <div className="px-4 py-6 text-center">
             <span className="text-[10px] text-red-400/60 mono">FEED ERROR</span>
-            <p className="text-[9px] text-[var(--t4)] mt-1">{error}</p>
+            <p className="text-[9px] text-[var(--t4)] mt-1 break-all">{error}</p>
           </div>
         )}
 
@@ -120,31 +122,49 @@ export function NewsFeedColumn({ feed, color }: NewsFeedColumnProps) {
             rel="noopener noreferrer"
             className="block px-4 py-3 border-b border-[var(--bd)] hover:bg-[var(--bg-2)] transition-colors no-underline group"
           >
-            <div className="flex items-start gap-2">
-              <div
-                className="w-1 h-1 rounded-full mt-1.5 shrink-0 opacity-60"
-                style={{ backgroundColor: color }}
-              />
+            {/* Image + text layout */}
+            <div className={showImages && item.imageUrl ? 'flex gap-3' : ''}>
               <div className="flex-1 min-w-0">
-                <h4 className="text-[11px] text-[var(--t1)] font-medium leading-tight group-hover:text-white line-clamp-3">
-                  {item.title}
-                </h4>
-                {item.contentSnippet && (
-                  <p className="text-[9px] text-[var(--t4)] mt-1 leading-relaxed line-clamp-2">
-                    {item.contentSnippet}
-                  </p>
-                )}
-                <div className="flex items-center gap-2 mt-1.5">
-                  <span className="text-[8px] mono text-[var(--t4)]">
-                    {timeAgo(item.isoDate ?? item.pubDate)}
-                  </span>
-                  {item.creator && (
-                    <span className="text-[8px] mono text-[var(--t4)] truncate max-w-[150px]">
-                      {item.creator}
-                    </span>
-                  )}
+                <div className="flex items-start gap-2">
+                  <div
+                    className="w-1 h-1 rounded-full mt-1.5 shrink-0 opacity-60"
+                    style={{ backgroundColor: color }}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-[11px] text-[var(--t1)] font-medium leading-tight group-hover:text-white line-clamp-3">
+                      {item.title}
+                    </h4>
+                    {item.contentSnippet && (
+                      <p className="text-[9px] text-[var(--t4)] mt-1 leading-relaxed line-clamp-2">
+                        {item.contentSnippet}
+                      </p>
+                    )}
+                    <div className="flex items-center gap-2 mt-1.5">
+                      <span className="text-[8px] mono text-[var(--t4)]">
+                        {timeAgo(item.isoDate ?? item.pubDate)}
+                      </span>
+                      {item.creator && (
+                        <span className="text-[8px] mono text-[var(--t4)] truncate max-w-[120px]">
+                          {item.creator}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
+
+              {/* Article image */}
+              {showImages && item.imageUrl && (
+                <div className="w-[80px] h-[56px] rounded overflow-hidden shrink-0 bg-[var(--bg-2)]">
+                  <img
+                    src={item.imageUrl}
+                    alt=""
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                  />
+                </div>
+              )}
             </div>
           </a>
         ))}

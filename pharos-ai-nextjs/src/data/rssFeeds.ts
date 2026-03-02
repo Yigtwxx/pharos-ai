@@ -37,11 +37,11 @@ export interface ConflictChannel {
 
 export const RSS_FEEDS: RssFeed[] = [
   // ── US / Western mainstream ──
-  { id: 'reuters',       name: 'Reuters',              url: 'https://www.reutersagency.com/feed/',                perspective: 'WESTERN',     country: 'UK/US',     tags: ['world', 'wire'] },
+  { id: 'reuters',       name: 'Reuters',              url: 'https://news.google.com/rss/search?q=site:reuters.com+when:1d&hl=en-US&gl=US&ceid=US:en', perspective: 'WESTERN', country: 'UK/US', tags: ['world', 'wire'] },
   { id: 'ap',            name: 'Associated Press',     url: 'https://feedx.net/rss/ap.xml',                      perspective: 'WESTERN',     country: 'US',        tags: ['world', 'wire'] },
   { id: 'bbc',           name: 'BBC World',            url: 'https://feeds.bbci.co.uk/news/world/rss.xml',       perspective: 'WESTERN',     country: 'UK',        tags: ['world'] },
   { id: 'nyt',           name: 'New York Times',       url: 'https://rss.nytimes.com/services/xml/rss/nyt/World.xml', perspective: 'WESTERN', country: 'US',        tags: ['world'] },
-  { id: 'wapo',          name: 'Washington Post',      url: 'https://feeds.washingtonpost.com/rss/world',        perspective: 'WESTERN',     country: 'US',        tags: ['world'] },
+  { id: 'wapo',          name: 'Washington Post',      url: 'https://news.google.com/rss/search?q=site:washingtonpost.com+when:1d&hl=en-US&gl=US&ceid=US:en', perspective: 'WESTERN', country: 'US', tags: ['world'] },
   { id: 'guardian',      name: 'The Guardian',         url: 'https://www.theguardian.com/world/rss',             perspective: 'WESTERN',     country: 'UK',        tags: ['world'] },
   { id: 'cnn',           name: 'CNN World',            url: 'http://rss.cnn.com/rss/edition_world.rss',          perspective: 'WESTERN',     country: 'US',        tags: ['world'] },
   { id: 'fox',           name: 'Fox News World',       url: 'https://moxie.foxnews.com/google-publisher/world.xml', perspective: 'WESTERN',  country: 'US',        tags: ['world', 'conservative'] },
@@ -50,23 +50,23 @@ export const RSS_FEEDS: RssFeed[] = [
 
   // ── US Government / Military ──
   { id: 'dod',           name: 'US Dept of Defense',   url: 'https://www.defense.gov/DesktopModules/ArticleCS/RSS.ashx?ContentType=1&Site=945&max=10', perspective: 'US_GOV', country: 'US', tags: ['military', 'official'] },
-  { id: 'centcom',       name: 'CENTCOM News',         url: 'https://www.centcom.mil/RSS/', perspective: 'US_GOV', country: 'US', tags: ['military', 'official', 'mideast'] },
+  { id: 'centcom',       name: 'CENTCOM News',         url: 'https://news.google.com/rss/search?q=CENTCOM+when:1d&hl=en-US&gl=US&ceid=US:en', perspective: 'US_GOV', country: 'US', tags: ['military', 'official', 'mideast'] },
 
   // ── Israeli media ──
   { id: 'timesofisrael', name: 'Times of Israel',      url: 'https://www.timesofisrael.com/feed/',               perspective: 'ISRAELI',     country: 'Israel',    tags: ['israel', 'mideast'] },
   { id: 'jpost',         name: 'Jerusalem Post',       url: 'https://www.jpost.com/rss/rssfeedsfrontpage.aspx',  perspective: 'ISRAELI',     country: 'Israel',    tags: ['israel', 'mideast'] },
-  { id: 'haaretz',       name: 'Haaretz',              url: 'https://www.haaretz.com/cmlink/1.628765',           perspective: 'ISRAELI',     country: 'Israel',    tags: ['israel', 'mideast', 'liberal'] },
-  { id: 'i24',           name: 'i24NEWS',              url: 'https://www.i24news.tv/en/rss',                     perspective: 'ISRAELI',     country: 'Israel',    tags: ['israel', 'mideast'] },
+  { id: 'haaretz',       name: 'Haaretz',              url: 'https://news.google.com/rss/search?q=site:haaretz.com+when:1d&hl=en-US&gl=US&ceid=US:en', perspective: 'ISRAELI', country: 'Israel', tags: ['israel', 'mideast', 'liberal'] },
+  { id: 'i24',           name: 'i24NEWS',              url: 'https://news.google.com/rss/search?q=site:i24news.tv+when:1d&hl=en-US&gl=US&ceid=US:en', perspective: 'ISRAELI', country: 'Israel', tags: ['israel', 'mideast'] },
 
   // ── Iranian state / aligned media ──
-  { id: 'presstv',       name: 'Press TV',             url: 'https://www.presstv.ir/RSS',                        perspective: 'IRANIAN',     country: 'Iran',      tags: ['iran', 'mideast'], stateFunded: true },
-  { id: 'irna',          name: 'IRNA',                 url: 'https://en.irna.ir/rss',                            perspective: 'IRANIAN',     country: 'Iran',      tags: ['iran', 'mideast', 'official'], stateFunded: true },
-  { id: 'tehrantimes',   name: 'Tehran Times',         url: 'https://www.tehrantimes.com/rss',                   perspective: 'IRANIAN',     country: 'Iran',      tags: ['iran', 'mideast'], stateFunded: true },
-  { id: 'tasnim',        name: 'Tasnim News',          url: 'https://www.tasnimnews.com/en/rss',                 perspective: 'IRANIAN',     country: 'Iran',      tags: ['iran', 'mideast', 'irgc'] },
+  { id: 'presstv',       name: 'Press TV',             url: 'https://news.google.com/rss/search?q=site:presstv.ir+when:1d&hl=en-US&gl=US&ceid=US:en', perspective: 'IRANIAN', country: 'Iran', tags: ['iran', 'mideast'], stateFunded: true },
+  { id: 'irna',          name: 'IRNA',                 url: 'https://news.google.com/rss/search?q=site:en.irna.ir+when:1d&hl=en-US&gl=US&ceid=US:en', perspective: 'IRANIAN', country: 'Iran', tags: ['iran', 'mideast', 'official'], stateFunded: true },
+  { id: 'tehrantimes',   name: 'Tehran Times',         url: 'https://news.google.com/rss/search?q=site:tehrantimes.com+when:1d&hl=en-US&gl=US&ceid=US:en', perspective: 'IRANIAN', country: 'Iran', tags: ['iran', 'mideast'], stateFunded: true },
+  { id: 'tasnim',        name: 'Tasnim News',          url: 'https://news.google.com/rss/search?q=site:tasnimnews.com+when:1d&hl=en-US&gl=US&ceid=US:en', perspective: 'IRANIAN', country: 'Iran', tags: ['iran', 'mideast', 'irgc'] },
 
   // ── Arab / Middle East ──
   { id: 'aljazeera',     name: 'Al Jazeera',           url: 'https://www.aljazeera.com/xml/rss/all.xml',         perspective: 'ARAB',        country: 'Qatar',     tags: ['world', 'mideast'], stateFunded: true },
-  { id: 'alarabiya',     name: 'Al Arabiya',           url: 'https://english.alarabiya.net/tools/rss',           perspective: 'ARAB',        country: 'Saudi Arabia', tags: ['mideast'], stateFunded: true },
+  { id: 'alarabiya',     name: 'Al Arabiya',           url: 'https://news.google.com/rss/search?q=site:english.alarabiya.net+when:1d&hl=en-US&gl=US&ceid=US:en', perspective: 'ARAB', country: 'Saudi Arabia', tags: ['mideast'], stateFunded: true },
   { id: 'middleeasteye', name: 'Middle East Eye',      url: 'https://www.middleeasteye.net/rss',                 perspective: 'ARAB',        country: 'UK',        tags: ['mideast'] },
 
   // ── Russian ──

@@ -1,0 +1,86 @@
+'use client';
+
+import Link from 'next/link';
+
+const DATA_SOURCES = [
+  {
+    href: '/dashboard/data/news',
+    label: 'RSS NEWS MONITOR',
+    description: 'Live RSS feeds from 30 global news sources. Multi-perspective conflict channels with Western, US/Pentagon, Israeli, and Iranian state media.',
+    count: '30 feeds',
+    status: 'LIVE',
+    color: '#ef4444',
+  },
+  // Future data sources
+  {
+    href: '#',
+    label: 'FLIGHT TRACKING',
+    description: 'Real-time aircraft tracking via ADS-B / OpenSky Network. Military and civilian traffic over conflict zones.',
+    count: '—',
+    status: 'PLANNED',
+    color: '#6b7280',
+  },
+  {
+    href: '#',
+    label: 'VESSEL TRACKING',
+    description: 'AIS maritime vessel positions. Naval deployments, tanker movements, Strait of Hormuz traffic.',
+    count: '—',
+    status: 'PLANNED',
+    color: '#6b7280',
+  },
+  {
+    href: '#',
+    label: 'SATELLITE IMAGERY',
+    description: 'Open-source satellite imagery analysis. BDA, infrastructure monitoring, troop movements.',
+    count: '—',
+    status: 'PLANNED',
+    color: '#6b7280',
+  },
+];
+
+export default function DataIndexPage() {
+  return (
+    <div className="flex-1 overflow-y-auto p-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-baseline gap-3 mb-6">
+          <h1 className="mono text-[16px] font-bold text-[var(--t1)] tracking-[0.1em]">DATA SOURCES</h1>
+          <span className="text-[10px] text-[var(--t4)]">Open-source intelligence feeds</span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {DATA_SOURCES.map(source => (
+            <Link
+              key={source.label}
+              href={source.href}
+              className={`
+                no-underline block p-5 rounded-lg border transition-colors
+                ${source.status === 'LIVE'
+                  ? 'bg-[var(--bg-1)] border-[var(--bd)] hover:bg-[var(--bg-2)] hover:border-white/20 cursor-pointer'
+                  : 'bg-[var(--bg-1)] border-[var(--bd)] opacity-40 cursor-not-allowed pointer-events-none'
+                }
+              `}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: source.color }} />
+                <span className="mono text-[11px] font-bold text-[var(--t1)] tracking-wider">
+                  {source.label}
+                </span>
+                <span className={`ml-auto px-1.5 py-0.5 rounded text-[7px] mono font-bold border ${
+                  source.status === 'LIVE'
+                    ? 'bg-[var(--danger-dim)] text-[var(--danger)] border-[var(--danger-bd)]'
+                    : 'bg-white/5 text-[var(--t4)] border-white/10'
+                }`}>
+                  {source.status}
+                </span>
+              </div>
+              <p className="text-[10px] text-[var(--t3)] leading-relaxed mb-2">
+                {source.description}
+              </p>
+              <span className="mono text-[9px] text-[var(--t4)]">{source.count}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -2,10 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import Parser from 'rss-parser';
 
 const parser = new Parser({
-  timeout: 8000,
+  timeout: 10000,
   headers: {
-    'User-Agent': 'Pharos-Intel/1.0 (RSS Monitor)',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     Accept: 'application/rss+xml, application/xml, text/xml, */*',
+  },
+  customFields: {
+    item: [
+      ['media:content', 'mediaContent', { keepArray: false }],
+      ['media:thumbnail', 'mediaThumbnail', { keepArray: false }],
+      ['enclosure', 'enclosure', { keepArray: false }],
+    ],
   },
 });
 
@@ -21,6 +28,37 @@ interface FeedItem {
   creator?: string;
   categories?: string[];
   isoDate?: string;
+  imageUrl?: string;
+}
+
+/** Extract image URL from various RSS feed formats */
+function extractImage(item: Record<string, unknown>): string | undefined {
+  // media:content
+  const mc = item.mediaContent as Record<string, unknown> | undefined;
+  if (mc) {
+    const url = (mc.$ as Record<string, string>)?.url ?? mc.url;
+    if (typeof url === 'string' && url.startsWith('http')) return url;
+  }
+  // media:thumbnail
+  const mt = item.mediaThumbnail as Record<string, unknown> | undefined;
+  if (mt) {
+    const url = (mt.$ as Record<string, string>)?.url ?? mt.url;
+    if (typeof url === 'string' && url.startsWith('http')) return url;
+  }
+  // enclosure (type=image)
+  const enc = item.enclosure as Record<string, unknown> | undefined;
+  if (enc) {
+    const url = (enc.$ as Record<string, string>)?.url ?? enc.url;
+    const type = (enc.$ as Record<string, string>)?.type ?? enc.type ?? '';
+    if (typeof url === 'string' && url.startsWith('http') && String(type).startsWith('image')) return url;
+  }
+  // content:encoded — look for first <img src="...">
+  const content = item['content:encoded'] as string ?? item.content as string ?? '';
+  if (content) {
+    const match = content.match(/<img[^>]+src=["']([^"']+)["']/);
+    if (match?.[1]?.startsWith('http')) return match[1];
+  }
+  return undefined;
 }
 
 interface FeedResult {
@@ -73,6 +111,7 @@ export async function GET(req: NextRequest) {
             creator: item.creator ?? item['dc:creator'] ?? undefined,
             categories: item.categories ?? [],
             isoDate: item.isoDate ?? undefined,
+            imageUrl: extractImage(item as unknown as Record<string, unknown>),
           })),
         };
         cache.set(url, { data: result, ts: Date.now() });
