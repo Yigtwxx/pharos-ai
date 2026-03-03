@@ -45,9 +45,9 @@ export default function MapVisibilityMenu({ visibility, onToggle }: Props) {
       {open && (
         <div style={{
           position:     'absolute',
-          top:          '100%',
+          bottom:       '100%',
           right:        0,
-          marginTop:    4,
+          marginBottom: 4,
           background:   'rgba(28,33,39,0.95)',
           border:       '1px solid var(--bd)',
           borderRadius: 2,
