@@ -1,4 +1,5 @@
 'use client';
+export const dynamic = 'force-dynamic';
 import { useState, useMemo } from 'react';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 import { usePanelLayout } from '@/hooks/use-panel-layout';
