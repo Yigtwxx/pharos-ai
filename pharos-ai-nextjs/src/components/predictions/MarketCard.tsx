@@ -14,19 +14,20 @@ interface MarketCardProps {
 
 export function MarketCard({ market, group, rank, onFocus }: MarketCardProps) {
   const [history, setHistory] = useState<TimePoint[]>([]);
-  const [chartLoading, setChartLoading] = useState(true);
+  const [chartLoading, setChartLoading] = useState(() => !!market.yesTokenId);
+  const [nowMs] = useState(() => Date.now());
 
   const prob   = getLeadProb(market);
   const pColor = probColor(prob);
   const status = statusLabel(market);
 
   const daysLeft = market.endDate
-    ? Math.max(0, Math.floor((new Date(market.endDate).getTime() - Date.now()) / 86_400_000))
+    ? Math.max(0, Math.floor((new Date(market.endDate).getTime() - nowMs) / 86_400_000))
     : null;
 
   // Lazy-load 7-day history
   useEffect(() => {
-    if (!market.yesTokenId) { setChartLoading(false); return; }
+    if (!market.yesTokenId) return;
     let cancelled = false;
     fetch(`/api/v1/predictions/history?tokenId=${encodeURIComponent(market.yesTokenId)}&range=7d`)
       .then(r => r.json())

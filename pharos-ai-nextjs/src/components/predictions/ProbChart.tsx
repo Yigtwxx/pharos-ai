@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { createChart, type IChartApi, ColorType, LineStyle, AreaSeries } from 'lightweight-charts';
+import { createChart, type IChartApi, type UTCTimestamp, ColorType, LineStyle, AreaSeries } from 'lightweight-charts';
 import type { TimePoint } from '@/types/domain';
 
 interface ProbChartProps {
@@ -10,6 +10,12 @@ interface ProbChartProps {
   height?: number;
   interactive?: boolean;
   onCrosshair?: (p: number | null) => void;
+}
+
+function getSeriesValue(input: unknown): number | null {
+  if (!input || typeof input !== 'object' || !('value' in input)) return null;
+  const value = (input as { value?: unknown }).value;
+  return typeof value === 'number' ? value : null;
 }
 
 export function ProbChart({ data, color, height = 80, interactive = false, onCrosshair }: ProbChartProps) {
@@ -76,10 +82,10 @@ export function ProbChart({ data, color, height = 80, interactive = false, onCro
         formatter: (p: number) => `${(p * 100).toFixed(1)}%`,
         minMove: 0.001,
       },
-    } as any);
+    });
 
     // Convert p (0-1) → keep as is, formatter handles display
-    const formatted = data.map(d => ({ time: d.t as any, value: d.p }));
+    const formatted = data.map(d => ({ time: d.t as UTCTimestamp, value: d.p }));
     series.setData(formatted);
     chart.timeScale().fitContent();
 
@@ -87,12 +93,12 @@ export function ProbChart({ data, color, height = 80, interactive = false, onCro
       chart.subscribeCrosshairMove(param => {
         if (!param.point || !param.time) { onCrosshair(null); return; }
         const val = param.seriesData.get(series);
-        if (val && 'value' in val) onCrosshair((val as any).value);
+        const value = getSeriesValue(val);
+        if (value !== null) onCrosshair(value);
         else onCrosshair(null);
       });
     }
 
-    (chart as any).applyOptions({ attributionLogo: false });
     chartRef.current = chart;
 
     const obs = new ResizeObserver(entries => {

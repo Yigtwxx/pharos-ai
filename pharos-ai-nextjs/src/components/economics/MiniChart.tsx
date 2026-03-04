@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { createChart, type IChartApi, ColorType, LineStyle, AreaSeries } from 'lightweight-charts';
+import { createChart, type IChartApi, type UTCTimestamp, ColorType, LineStyle, AreaSeries } from 'lightweight-charts';
 
 interface MiniChartProps {
   data: { time: number; value: number }[];
@@ -13,7 +13,6 @@ interface MiniChartProps {
 export function MiniChart({ data, color, positive, height = 80 }: MiniChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
-  const seriesRef = useRef<any>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -68,13 +67,11 @@ export function MiniChart({ data, color, positive, height = 80 }: MiniChartProps
       crosshairMarkerRadius: 3,
     });
 
-    const formatted = data.map(d => ({ time: d.time as any, value: d.value }));
+    const formatted = data.map(d => ({ time: d.time as UTCTimestamp, value: d.value }));
     series.setData(formatted);
     chart.timeScale().fitContent();
 
-    (chart as any).applyOptions({ attributionLogo: false });
     chartRef.current = chart;
-    seriesRef.current = series;
 
     const observer = new ResizeObserver(entries => {
       for (const entry of entries) {

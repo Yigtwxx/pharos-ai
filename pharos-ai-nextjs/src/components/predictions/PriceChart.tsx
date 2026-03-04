@@ -13,6 +13,17 @@ const SVG_FONT = 'SFMono-Regular, Menlo, monospace';
 
 type Props = { yesTokenId: string };
 
+function Placeholder({ msg, w, h }: { msg: string; w: number; h: number }) {
+  return (
+    <div style={{ width: w, height: h + 24 }} className="flex flex-col gap-1">
+      <span className="mono label">PRICE HISTORY</span>
+      <div className="flex flex-1 items-center justify-center border border-[var(--bd)] rounded-[2px]">
+        <span className="mono label">{msg}</span>
+      </div>
+    </div>
+  );
+}
+
 export function PriceChart({ yesTokenId }: Props) {
   const [history,  setHistory]  = useState<TimePoint[]>([]);
   const [loading,  setLoading]  = useState(true);
@@ -24,7 +35,7 @@ export function PriceChart({ yesTokenId }: Props) {
   const resizeRef = useRef<{ sx: number; sy: number; sw: number; sh: number } | null>(null);
 
   useEffect(() => {
-    if (!yesTokenId) { setLoading(false); setError(true); return; }
+    if (!yesTokenId) return;
     fetch(`/api/v1/predictions/chart?id=${encodeURIComponent(yesTokenId)}`)
       .then(r => r.json())
       .then((d: { history?: TimePoint[] }) => { setHistory(d.history ?? []); setLoading(false); })
@@ -72,18 +83,9 @@ export function PriceChart({ yesTokenId }: Props) {
   const chartH   = h - PAD.top  - PAD.bottom;
   const gradId   = `fill-${yesTokenId.slice(-8)}`;
 
-  // ── Placeholder (loading / no data) ──────────────────────────────────────
-  const Placeholder = ({ msg }: { msg: string }) => (
-    <div style={{ width: w, height: h + 24 }} className="flex flex-col gap-1">
-      <span className="mono label">PRICE HISTORY</span>
-      <div className="flex flex-1 items-center justify-center border border-[var(--bd)] rounded-[2px]">
-        <span className="mono label">{msg}</span>
-      </div>
-    </div>
-  );
-
-  if (loading) return <Placeholder msg="LOADING CHART..." />;
-  if (error || history.length < 2) return <Placeholder msg="NO PRICE HISTORY" />;
+  if (!yesTokenId) return <Placeholder msg="NO PRICE HISTORY" w={w} h={h} />;
+  if (loading) return <Placeholder msg="LOADING CHART..." w={w} h={h} />;
+  if (error || history.length < 2) return <Placeholder msg="NO PRICE HISTORY" w={w} h={h} />;
 
   const pts    = history;
   const minT   = pts[0].t, maxT = pts[pts.length - 1].t;

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { createChart, ColorType, LineStyle, AreaSeries, type IChartApi } from 'lightweight-charts';
+import { createChart, ColorType, LineStyle, AreaSeries, type IChartApi, type UTCTimestamp } from 'lightweight-charts';
 import type { EconomicIndex } from '@/types/domain';
 import type { MarketResult } from '@/types/domain';
 import { ECON_CATEGORY_MAP } from '@/data/economic-indexes';
@@ -36,7 +36,8 @@ export function FocusedChart({ index, data: initialData, initialRangeKey = '5d',
   const containerRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
-  const anchorLineRef = useRef<any>(null);
+  const anchorLineRef = useRef<ReturnType<ReturnType<IChartApi['addSeries']>['createPriceLine']> | null>(null);
+  const anchorModeRef = useRef(false);
 
   const [open, setOpen] = useState(false);
   const [anchorPrice, setAnchorPrice] = useState<number | null>(null);
@@ -52,16 +53,16 @@ export function FocusedChart({ index, data: initialData, initialRangeKey = '5d',
   const cat = ECON_CATEGORY_MAP[index.category];
   const positive = data.changePct >= 0;
 
+  const handleClose = useCallback(() => {
+    setOpen(false);
+    setTimeout(onClose, 280);
+  }, [onClose]);
+
   // Compute stats from current chart data
   const prices = data.chart.map(p => p.value).filter(Boolean);
   const periodHigh = prices.length ? Math.max(...prices) : data.price;
   const periodLow  = prices.length ? Math.min(...prices) : data.price;
   const periodOpen = prices.length ? prices[0] : data.previousClose;
-
-  // % from anchor (if set) at current crosshair position
-  const anchorPct = anchorPrice && crosshairValue
-    ? ((crosshairValue.price - anchorPrice) / anchorPrice) * 100
-    : null;
 
   // Animate in on mount
   useEffect(() => {
@@ -74,12 +75,7 @@ export function FocusedChart({ index, data: initialData, initialRangeKey = '5d',
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') handleClose(); };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, []);
-
-  const handleClose = useCallback(() => {
-    setOpen(false);
-    setTimeout(onClose, 280);
-  }, [onClose]);
+  }, [handleClose]);
 
   // Fetch data for the selected range
   const fetchRange = useCallback(async (idx: number) => {
@@ -157,7 +153,7 @@ export function FocusedChart({ index, data: initialData, initialRangeKey = '5d',
       crosshairMarkerRadius: 5,
     });
 
-    series.setData(data.chart.map(p => ({ time: p.time as any, value: p.value })));
+    series.setData(data.chart.map(p => ({ time: p.time as UTCTimestamp, value: p.value })));
     chart.timeScale().fitContent();
 
     // Track crosshair
@@ -168,17 +164,16 @@ export function FocusedChart({ index, data: initialData, initialRangeKey = '5d',
       }
       const price = param.seriesData.get(series);
       if (price && 'value' in price) {
-        setCrosshairValue({ price: (price as any).value, time: param.time as number });
+        setCrosshairValue({ price: price.value, time: Number(param.time) });
       }
     });
 
-    // Click to set anchor (when anchorMode is active via ref)
-    const anchorModeRef = { current: false };
+    // Click to set anchor (when anchor mode is active)
     chart.subscribeClick(param => {
       if (!anchorModeRef.current) return;
       const price = param.seriesData.get(series);
       if (price && 'value' in price) {
-        const p = (price as any).value as number;
+        const p = price.value;
         setAnchorPrice(p);
         setAnchorMode(false);
         anchorModeRef.current = false;
@@ -199,10 +194,6 @@ export function FocusedChart({ index, data: initialData, initialRangeKey = '5d',
       }
     });
 
-    // Expose anchorModeRef toggle
-    (containerRef.current as any).__setAnchorMode = (v: boolean) => { anchorModeRef.current = v; };
-
-    (chart as any).applyOptions({ attributionLogo: false });
     chartRef.current = chart;
 
     const obs = new ResizeObserver(entries => {
@@ -218,11 +209,9 @@ export function FocusedChart({ index, data: initialData, initialRangeKey = '5d',
     };
   }, [data, positive]);
 
-  // Sync anchorMode ref into the chart click handler
+  // Sync anchor mode ref into the chart click handler
   useEffect(() => {
-    if (!containerRef.current) return;
-    const setter = (containerRef.current as any).__setAnchorMode;
-    if (setter) setter(anchorMode);
+    anchorModeRef.current = anchorMode;
   }, [anchorMode]);
 
   const clearAnchor = useCallback(() => {
