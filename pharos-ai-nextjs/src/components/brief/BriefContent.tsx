@@ -120,7 +120,19 @@ export function BriefContent() {
                 >
                   T{src.tier}
                 </span>
-                <span className="text-[11px] font-semibold text-[var(--t1)] min-w-[180px]">{src.name}</span>
+                {'url' in src && src.url ? (
+                  <a
+                    href={(src as { url: string }).url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[11px] font-semibold min-w-[180px] hover:underline"
+                    style={{ color: 'var(--blue-l)', textDecoration: 'none' }}
+                  >
+                    {src.name} ↗
+                  </a>
+                ) : (
+                  <span className="text-[11px] font-semibold text-[var(--t1)] min-w-[180px]">{src.name}</span>
+                )}
                 <span className="text-[10px] text-[var(--t3)] flex-1">{src.note}</span>
               </div>
             ))}
