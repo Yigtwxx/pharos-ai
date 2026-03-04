@@ -6,6 +6,7 @@ import { useBootstrap } from '@/api/bootstrap';
 import { useEvents } from '@/api/events';
 import { useConflict } from '@/api/conflicts';
 import { useIsMobile } from '@/hooks/use-is-mobile';
+import { useIsLandscapePhone } from '@/hooks/use-is-landscape-phone';
 
 const NAV = [
   { label: 'OVERVIEW',    href: '/dashboard'              },
@@ -23,6 +24,10 @@ export function Header() {
   const { data: events } = useEvents();
   const { data: conflict } = useConflict();
   const isMobile = useIsMobile();
+  const isLandscapePhone = useIsLandscapePhone();
+
+  // Hide header on map page in landscape phone mode — map has its own navigation
+  if (isLandscapePhone && path.startsWith('/dashboard/map')) return null;
 
   const isActive = (href: string) =>
     href === '/dashboard' ? path === '/dashboard' : path.startsWith(href);

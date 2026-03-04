@@ -12,7 +12,7 @@ export function LandscapeHeader({ title, onBack, right }: Props) {
   return (
     <div
       className="shrink-0 flex items-center gap-2 h-9 px-2 bg-[var(--bg-app)] border-b border-[var(--bd)]"
-      style={{ paddingLeft: 'max(8px, var(--safe-left))', paddingRight: 'max(8px, var(--safe-right))' }}
+      style={{ paddingLeft: 'max(8px, env(safe-area-inset-left))', paddingRight: 'max(8px, env(safe-area-inset-right))' }}
     >
       <button
         onClick={onBack}

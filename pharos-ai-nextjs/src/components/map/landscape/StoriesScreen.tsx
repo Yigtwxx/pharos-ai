@@ -51,7 +51,7 @@ export function StoriesScreen({ stories, activeStory, onBack, onSelectStory }: P
   };
 
   return (
-    <div className="flex flex-col h-full w-full bg-[var(--bg-app)] overflow-hidden">
+    <div className="flex flex-col h-full w-full bg-[var(--bg-app)] overflow-hidden" style={{ paddingLeft: 'env(safe-area-inset-left)', paddingRight: 'env(safe-area-inset-right)' }}>
       <LandscapeHeader title="MAP" onBack={onBack} />
 
       {/* Story count */}
