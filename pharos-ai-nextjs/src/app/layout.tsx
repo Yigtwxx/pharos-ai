@@ -9,8 +9,38 @@ import { QueryProvider } from '@/lib/QueryProvider';
 import type { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Pharos Intelligence',
-  description: 'Geopolitical Intelligence Dashboard',
+  metadataBase: new URL('https://www.conflicts.today'),
+  applicationName: 'Conflicts.app',
+  title: {
+    default: 'Conflicts.app',
+    template: '%s | Conflicts.app',
+  },
+  description: 'Pharos is a live geopolitical intelligence dashboard for conflict tracking across events, actors, signals, briefs, and map-based analysis.',
+  openGraph: {
+    type: 'website',
+    url: 'https://www.conflicts.today',
+    siteName: 'Conflicts.app',
+    title: 'Conflicts.app',
+    description: 'Pharos is a live geopolitical intelligence dashboard for conflict tracking across events, actors, signals, briefs, and map-based analysis.',
+    images: [
+      {
+        url: '/app_screenshot.png',
+        width: 1920,
+        height: 1080,
+        alt: 'Pharos conflict intelligence map and operations dashboard',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Conflicts.app',
+    description: 'Pharos is a live geopolitical intelligence dashboard for conflict tracking across events, actors, signals, briefs, and map-based analysis.',
+    images: ['/app_screenshot.png'],
+  },
+  icons: {
+    icon: '/icon.svg',
+    apple: '/apple-icon',
+  },
 };
 
 export const viewport: Viewport = {
