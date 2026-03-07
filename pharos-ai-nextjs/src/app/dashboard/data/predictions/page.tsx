@@ -1,6 +1,6 @@
 'use client';
 
-import { PredictionsDataContent } from '@/components/predictions/PredictionsDataContent';
+import { PredictionsDataContent } from '@/features/predictions/components/PredictionsDataContent';
 
 export default function PredictionsDataPage() {
   return <PredictionsDataContent />;

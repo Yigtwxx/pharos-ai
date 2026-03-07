@@ -1,8 +1,8 @@
 'use client';
 export const dynamic = 'force-dynamic';
 import { Suspense } from 'react';
-import { SignalsContent } from '@/components/signals/SignalsContent';
-import { ListDetailScreenSkeleton } from '@/components/loading/screen-skeletons';
+import { SignalsContent } from '@/features/signals/components/SignalsContent';
+import { ListDetailScreenSkeleton } from '@/shared/components/loading/screen-skeletons';
 
 export default function SignalsPage() {
   return (

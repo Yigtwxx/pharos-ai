@@ -17,10 +17,10 @@ import {
 import { selectFilterState, selectIsFiltered } from '@/store/map-selectors';
 
 import { useMapData } from '@/api/map';
-import { applyFilters, extractInitialState, extractTimeExtent } from '@/lib/map-filter-engine';
+import { applyFilters, extractInitialState, extractTimeExtent } from '@/features/map/lib/map-filter-engine';
 
 import type { ActorMeta } from '@/data/map-tokens';
-import type { DataArrays, FilterState, FilteredData, FilterFacets } from '@/lib/map-filter-engine';
+import type { DataArrays, FilterState, FilteredData, FilterFacets } from '@/features/map/lib/map-filter-engine';
 
 // ─── Re-exports ─────────────────────────────────────────────────────────────────
 

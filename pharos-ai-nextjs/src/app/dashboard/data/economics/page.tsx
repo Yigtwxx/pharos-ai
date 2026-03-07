@@ -1,6 +1,6 @@
 'use client';
 
-import { EconomicsContent } from '@/components/economics/EconomicsContent';
+import { EconomicsContent } from '@/features/economics/components/EconomicsContent';
 
 export default function EconomicsPage() {
   return <EconomicsContent />;

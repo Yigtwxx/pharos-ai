@@ -1,6 +1,6 @@
 'use client';
 
-import { TimelineContent } from '@/components/news/TimelineContent';
+import { TimelineContent } from '@/features/news/components/TimelineContent';
 
 export default function TimelinePage() {
   return <TimelineContent />;

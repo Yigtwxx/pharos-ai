@@ -1,11 +1,11 @@
 'use client';
 
 import { Suspense } from 'react';
-import { SummaryBar } from '@/components/overview/SummaryBar';
-import { WorkspaceDashboard } from '@/components/dashboard/WorkspaceDashboard';
+import { SummaryBar } from '@/features/dashboard/components/SummaryBar';
+import { WorkspaceDashboard } from '@/features/dashboard/components/WorkspaceDashboard';
 import { useIsLandscapePhone } from '@/hooks/use-is-landscape-phone';
 import { useLandscapeScrollEmitter } from '@/hooks/use-landscape-scroll-emitter';
-import { OverviewScreenSkeleton } from '@/components/loading/screen-skeletons';
+import { OverviewScreenSkeleton } from '@/shared/components/loading/screen-skeletons';
 
 export default function OverviewPage() {
   const isLandscapePhone = useIsLandscapePhone();

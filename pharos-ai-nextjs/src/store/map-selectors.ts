@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 
 import type { RootState } from './index';
-import type { FilterState } from '@/lib/map-filter-engine';
+import type { FilterState } from '@/features/map/lib/map-filter-engine';
 
 // ─── Base selectors ──────────────────────────────────────────────────────────
 

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { publicConflictId } from '@/shared/lib/env';
 import type { MapStory } from '@/types/domain';
 import type { StrikeArc, MissileTrack, Target, Asset, ThreatZone, HeatPoint } from '@/data/map-data';
-import type { DataArrays } from '@/lib/map-filter-engine';
+import type { DataArrays } from '@/features/map/lib/map-filter-engine';
 import type { ActorMeta } from '@/data/map-tokens';
 
 import { api } from '../client';
