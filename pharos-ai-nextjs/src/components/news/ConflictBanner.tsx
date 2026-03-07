@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import type { ConflictCollection } from '@/types/domain';
 import { useIsLandscapePhone } from '@/hooks/use-is-landscape-phone';
 
@@ -30,11 +31,12 @@ export function ConflictBanner({ collection, activeChannel, onChannelChange }: C
         {collection.channels.map((ch, idx) => {
           const active = idx === activeChannel;
           return (
-            <button
+            <Button
               key={ch.label}
+              variant="ghost"
               onClick={() => onChannelChange(idx)}
               className={`
-                px-4 py-2 rounded-t text-[10px] mono font-bold tracking-wider transition-colors border border-b-0
+                px-4 py-2 h-auto rounded-t rounded-b-none text-[10px] mono font-bold tracking-wider transition-colors border border-b-0
                 ${active
                   ? 'bg-[var(--bg-app)] text-white border-[var(--bd)]'
                   : 'bg-transparent text-[var(--t4)] border-transparent hover:text-[var(--t2)] hover:bg-[var(--bg-2)]'
@@ -53,7 +55,7 @@ export function ConflictBanner({ collection, activeChannel, onChannelChange }: C
                   {ch.perspective}
                 </div>
               )}
-            </button>
+            </Button>
           );
         })}
       </div>

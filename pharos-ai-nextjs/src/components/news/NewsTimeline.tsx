@@ -24,6 +24,7 @@ type NewsTimelineProps = {
 
 // ─── Colors ───────────────────────────────────────────────────
 
+import { Button } from '@/components/ui/button';
 import { PERSPECTIVE_COLORS } from '@/lib/news-colors';
 import { ago } from '@/lib/format';
 
@@ -383,44 +384,54 @@ export function NewsTimeline({ feedData }: NewsTimelineProps) {
 
         <div className="flex gap-1">
           {[1, 2, 3, 4].map(tier => (
-            <button
+            <Button
               key={tier}
+              variant="ghost"
+              size="sm"
               onClick={() => toggleTier(tier)}
-              className={`px-2 py-1 rounded text-[9px] mono font-bold tracking-wider transition-colors
+              className={`px-2 py-1 h-auto rounded text-[9px] mono font-bold tracking-wider
                 ${selectedTiers.has(tier)
                   ? 'bg-white/15 text-white border border-white/30'
                   : 'text-white/40 border border-transparent hover:text-white/70'
                 }`}
             >
               T{tier} {TIER_LABELS[tier]}
-            </button>
+            </Button>
           ))}
         </div>
 
         <div className="ml-auto flex items-center gap-3">
           <div className="flex items-center gap-1.5 border border-white/20 rounded px-2 py-0.5">
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => { zoomRef.current = Math.max(MIN_ZOOM, zoomRef.current - ZOOM_STEP * 2); commitTransform(); }}
-              className="mono text-[12px] text-white/70 hover:text-white w-4 text-center"
-            >−</button>
+              className="mono text-[12px] h-auto p-0 text-white/70 hover:text-white w-4 text-center"
+            >−</Button>
             <span className="mono text-[9px] text-white/70 w-10 text-center font-bold">{zoomPct}%</span>
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => { zoomRef.current = Math.min(MAX_ZOOM, zoomRef.current + ZOOM_STEP * 2); commitTransform(); }}
-              className="mono text-[12px] text-white/70 hover:text-white w-4 text-center"
-            >+</button>
+              className="mono text-[12px] h-auto p-0 text-white/70 hover:text-white w-4 text-center"
+            >+</Button>
           </div>
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={centerOnNewest}
-            className="mono text-[9px] font-bold text-white/70 hover:text-white transition-colors px-2 py-1 border border-white/20 rounded"
+            className="mono text-[9px] h-auto font-bold text-white/70 hover:text-white px-2 py-1 border-white/20"
           >
             → LATEST
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={resetView}
-            className="mono text-[9px] text-white/50 hover:text-white transition-colors"
+            className="mono text-[9px] h-auto p-0 text-white/50 hover:text-white"
           >
             RESET
-          </button>
+          </Button>
           <span className="mono text-[9px] font-bold text-white/60">{filtered.length} articles</span>
         </div>
       </div>
@@ -687,12 +698,14 @@ export function NewsTimeline({ feedData }: NewsTimelineProps) {
                           {article.feed.stateFunded && (
                             <span className="text-[9px] mono font-bold text-amber-400">STATE FUNDED</span>
                           )}
-                          <button
+                          <Button
+                            variant="ghost"
+                            size="icon"
                             onClick={(e) => { e.stopPropagation(); defocus(); }}
-                            className="ml-auto text-white/40 hover:text-white text-[20px] leading-none transition-colors"
+                            className="ml-auto w-6 h-6 text-white/40 hover:text-white text-[20px] leading-none"
                           >
                             ×
-                          </button>
+                          </Button>
                         </div>
                         {/* Time */}
                         <div className="flex items-baseline gap-2 mb-2">

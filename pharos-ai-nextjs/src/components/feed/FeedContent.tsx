@@ -80,16 +80,18 @@ export function FeedContent() {
           <>
             {/* Compact filter bar */}
             <div className={`shrink-0 flex items-center gap-2 border-b border-[var(--bd)] bg-[var(--bg-2)] ${usePageScroll ? 'py-1.5 safe-px' : 'px-3 py-[6px]'}`}>
-              <button
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => setFiltersOpen(p => !p)}
-                className={`text-[10px] px-[10px] py-[4px] border font-semibold tracking-wide transition-colors mono ${
+                className={`text-[10px] h-auto px-2.5 py-1 font-semibold tracking-wide transition-colors mono ${
                   filtersOpen
                     ? 'border-[var(--blue)] bg-[var(--blue-dim)] text-[var(--blue-l)]'
                     : 'border-[var(--bd)] bg-[var(--bg-3)] text-[var(--t3)]'
                 }`}
               >
                 FILTERS
-              </button>
+              </Button>
               <span className="mono text-[9px] text-[var(--t4)]">{filtered.length} events</span>
               <span className="mono text-[9px] text-[var(--t4)]">·</span>
               <span className="mono text-[9px] text-[var(--t3)]">{showAllDays ? 'ALL DAYS' : `DAY ${currentDay}`}</span>

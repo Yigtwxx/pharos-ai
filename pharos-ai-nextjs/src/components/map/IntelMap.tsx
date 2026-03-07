@@ -11,6 +11,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import type { PickingInfo } from '@deck.gl/core';
 import type { MapViewState } from '@deck.gl/core';
 
+import { Button } from '@/components/ui/button';
 import { useMapData } from '@/api/map';
 
 import type {
@@ -338,23 +339,20 @@ export default function IntelMap() {
           {buttonConfig.map(({ key, label, active }) => {
             const isActive = visibility[key];
             return (
-              <button
+              <Button
                 key={key}
+                variant="ghost"
+                size="sm"
                 onClick={() => toggleLayer(key)}
+                className="h-auto px-1.5 py-0.5 rounded-sm text-[8px] font-bold mono"
                 style={{
-                  padding: '2px 6px',
-                  borderRadius: 2,
-                  fontSize: 8,
-                  fontWeight: 700,
-                  fontFamily: 'monospace',
-                  cursor: 'pointer',
-                  border: `1px solid ${isActive ? active.border : '#404854'}`,
-                  background: isActive ? active.bg : '#252A31',
-                  color: isActive ? active.color : '#5C7080',
+                  border: `1px solid ${isActive ? active.border : 'var(--bd)'}`,
+                  background: isActive ? active.bg : 'var(--bg-1)',
+                  color: isActive ? active.color : 'var(--t4)',
                 }}
               >
                 {label}
-              </button>
+              </Button>
             );
           })}
         </div>

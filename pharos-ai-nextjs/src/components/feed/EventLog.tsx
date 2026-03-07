@@ -83,9 +83,10 @@ export function EventLog({ events, selectedId, onSelect, compact = false, pageSc
             const highCount = dayEvents.filter(e => e.severity === 'HIGH').length;
             return (
             <div key={date}>
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => toggleDate(date)}
-                className={cn('w-full flex items-center gap-2 py-1.5 bg-[var(--bg-2)] border-b border-[var(--bd)] cursor-pointer hover:bg-[var(--bg-3)] transition-colors', pageScroll ? 'safe-px' : 'px-3')}
+                className={cn('w-full flex items-center gap-2 h-auto py-1.5 rounded-none bg-[var(--bg-2)] border-b border-[var(--bd)] hover:bg-[var(--bg-3)] transition-colors justify-start', pageScroll ? 'safe-px' : 'px-3')}
               >
                 {isExpanded
                   ? <ChevronDown size={10} strokeWidth={2} className="text-[var(--t4)] shrink-0" />
@@ -95,7 +96,7 @@ export function EventLog({ events, selectedId, onSelect, compact = false, pageSc
                 <span className="mono text-[8px] text-[var(--t4)]">{dayEvents.length} events</span>
                 {critCount > 0 && <span className="mono text-[8px] text-[var(--danger)]">{critCount} CRIT</span>}
                 {highCount > 0 && <span className="mono text-[8px] text-[var(--warning)]">{highCount} HIGH</span>}
-              </button>
+              </Button>
               {isExpanded && dayEvents.map(evt => {
                 const isOn = selectedId === evt.id;
                 const sc   = SEV_C[evt.severity] ?? 'var(--info)';
@@ -163,9 +164,10 @@ export function EventLog({ events, selectedId, onSelect, compact = false, pageSc
             const highCount = dayEvents.filter(e => e.severity === 'HIGH').length;
             return (
             <div key={date}>
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => toggleDate(date)}
-                className={cn('w-full flex items-center gap-2 py-1.5 bg-[var(--bg-2)] border-b border-[var(--bd)] cursor-pointer hover:bg-[var(--bg-3)] transition-colors', pageScroll ? 'safe-px' : 'px-3')}
+                className={cn('w-full flex items-center gap-2 h-auto py-1.5 rounded-none bg-[var(--bg-2)] border-b border-[var(--bd)] hover:bg-[var(--bg-3)] transition-colors justify-start', pageScroll ? 'safe-px' : 'px-3')}
               >
                 {isExpanded
                   ? <ChevronDown size={10} strokeWidth={2} className="text-[var(--t4)] shrink-0" />
@@ -175,7 +177,7 @@ export function EventLog({ events, selectedId, onSelect, compact = false, pageSc
                 <span className="mono text-[8px] text-[var(--t4)]">{dayEvents.length} events</span>
                 {critCount > 0 && <span className="mono text-[8px] text-[var(--danger)]">{critCount} CRIT</span>}
                 {highCount > 0 && <span className="mono text-[8px] text-[var(--warning)]">{highCount} HIGH</span>}
-              </button>
+              </Button>
               {isExpanded && dayEvents.map(evt => {
                 const isOn = selectedId === evt.id;
                 const sc   = SEV_C[evt.severity] ?? 'var(--info)';

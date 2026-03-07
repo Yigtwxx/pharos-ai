@@ -1,11 +1,12 @@
 'use client';
 
-import { useRssFeeds } from '@/api/rss';
-import { NewsFeedColumn } from './NewsFeedColumn';
 import { useState, useMemo } from 'react';
+import { Button } from '@/components/ui/button';
+import { NewsFeedColumn } from './NewsFeedColumn';
+import { useRssFeeds } from '@/api/rss';
 import { PERSPECTIVE_COLORS } from '@/lib/news-colors';
-import type { FeedItem } from '@/types/domain';
 import { useIsLandscapePhone } from '@/hooks/use-is-landscape-phone';
+import type { FeedItem } from '@/types/domain';
 
 const PERSPECTIVES = ['ALL', 'WESTERN', 'US_GOV', 'ISRAELI', 'IRANIAN', 'ARAB', 'RUSSIAN', 'CHINESE', 'INDEPENDENT'] as const;
 
@@ -32,11 +33,13 @@ export function AllFeedsView({ showImages, feedData }: Props) {
         <span className="text-[9px] mono text-[var(--t4)] mr-2 shrink-0">FILTER:</span>
         <div className="flex gap-1 overflow-x-auto">
           {PERSPECTIVES.map(p => (
-            <button
+            <Button
               key={p}
+              variant="ghost"
+              size="sm"
               onClick={() => setFilter(p)}
               className={`
-                px-2 py-1 rounded text-[9px] mono font-bold tracking-wider transition-colors shrink-0
+                px-2 py-1 h-auto rounded text-[9px] mono font-bold tracking-wider transition-colors shrink-0
                 ${filter === p
                   ? 'bg-white/10 text-white border border-white/20'
                   : 'text-[var(--t4)] hover:text-[var(--t2)] hover:bg-[var(--bg-1)] border border-transparent'
@@ -47,7 +50,7 @@ export function AllFeedsView({ showImages, feedData }: Props) {
                 <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: PERSPECTIVE_COLORS[p] }} />
                 {p.replace('_', ' ')}
               </div>
-            </button>
+            </Button>
           ))}
         </div>
         <span className="text-[8px] mono text-[var(--t4)] ml-auto shrink-0">

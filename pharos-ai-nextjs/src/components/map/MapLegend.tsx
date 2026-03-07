@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 
 type LegendItem = { shape: 'rect' | 'circle' | 'zone'; color: string; label: string };
 
@@ -42,25 +43,19 @@ export default function MapLegend({ hasPanel, timelineVisible = true, isMobile =
       opacity:       hasPanel ? 0.4 : 1,
       zIndex:        22,
     }}>
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setIsCollapsed(v => !v)}
-        className="label"
+        className="label w-full justify-start h-auto text-[var(--t4)]"
         style={{
-          color:       'var(--t4)',
-          cursor:      'pointer',
-          background:  'transparent',
-          border:      'none',
           padding:     isCollapsed ? '6px 10px' : '0 0 6px 0',
-          display:     'block',
-          width:       '100%',
-          textAlign:   'left',
           fontSize:    9,
           fontWeight:  700,
           letterSpacing: '0.06em',
         }}
       >
         LEGEND {isCollapsed ? '▸' : '▾'}
-      </button>
+      </Button>
 
       {!isCollapsed && ITEMS.map(({ shape, color, label }) => (
         <div key={label} className="flex items-center gap-1.5" style={{ marginBottom: 3, fontSize: 9, color: 'var(--t3)' }}>

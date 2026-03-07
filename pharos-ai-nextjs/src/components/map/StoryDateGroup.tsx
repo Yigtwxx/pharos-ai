@@ -1,6 +1,7 @@
 'use client';
 
 import { ChevronRight, ChevronDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import StoryCard from './StoryCard';
 
 import type { MapStory } from '@/types/domain';
@@ -26,35 +27,19 @@ export default function StoryDateGroup({
   return (
     <div>
       {/* Date header */}
-      <button
+      <Button
+        variant="ghost"
         onClick={onToggle}
-        className="w-full flex items-center gap-2 mono"
-        style={{
-          padding:     '8px 16px',
-          fontSize:    10,
-          fontWeight:  700,
-          color:       'var(--t4)',
-          background:  'var(--bg-1)',
-          borderBottom: '1px solid var(--bd-s)',
-          cursor:      'pointer',
-          letterSpacing: '0.06em',
-        }}
+        className="w-full flex items-center gap-2 h-auto rounded-none justify-start mono px-4 py-2 text-[10px] font-bold text-[var(--t4)] bg-[var(--bg-1)] border-b border-[var(--bd-s)] tracking-[0.06em]"
       >
         {isExpanded
           ? <ChevronDown size={12} strokeWidth={2.5} />
           : <ChevronRight size={12} strokeWidth={2.5} />}
         {group.label}
-        <span style={{
-          background: 'var(--bg-3)',
-          color:      'var(--t4)',
-          fontSize:   8,
-          padding:    '1px 5px',
-          borderRadius: 2,
-          marginLeft: 2,
-        }}>
+        <span className="bg-[var(--bg-3)] text-[var(--t4)] text-[8px] px-1.5 py-px rounded-sm ml-0.5">
           {group.stories.length}
         </span>
-      </button>
+      </Button>
 
       {/* Nested story cards */}
       {isExpanded && group.stories.map(story => (

@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { createChart, ColorType, LineStyle, AreaSeries, type IChartApi, type UTCTimestamp } from 'lightweight-charts';
-import type { EconomicIndex } from '@/types/domain';
-import type { MarketResult } from '@/types/domain';
+import { Button } from '@/components/ui/button';
 import { ECON_CATEGORY_MAP } from '@/data/economic-indexes';
+import type { EconomicIndex, MarketResult } from '@/types/domain';
 
 const RANGES = [
   { key: '1d',  label: '1D',  interval: '5m'  },
@@ -286,18 +286,20 @@ export function FocusedChart({ index, data: initialData, initialRangeKey = '5d',
           {/* Range selector */}
           <div className="ml-auto flex items-center gap-1 mr-4">
             {RANGES.map((r, i) => (
-              <button
+              <Button
                 key={r.key}
+                variant="ghost"
+                size="sm"
                 onClick={() => setRangeIdx(i)}
                 disabled={fetching}
-                className={`px-2 py-1 rounded text-[9px] mono font-bold tracking-wider transition-all disabled:opacity-40 ${
+                className={`px-2 py-1 h-auto rounded text-[9px] mono font-bold tracking-wider disabled:opacity-40 ${
                   i === rangeIdx
                     ? 'bg-white/12 text-white border border-white/25'
                     : 'text-[var(--t4)] hover:text-[var(--t2)] border border-transparent hover:bg-white/5'
                 }`}
               >
                 {r.label}
-              </button>
+              </Button>
             ))}
             {fetching && (
               <div className="w-3.5 h-3.5 border-[1.5px] border-white/10 border-t-white/50 rounded-full animate-spin ml-1" />
@@ -319,12 +321,14 @@ export function FocusedChart({ index, data: initialData, initialRangeKey = '5d',
             </div>
 
             {/* Close */}
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={handleClose}
-              className="w-8 h-8 flex items-center justify-center rounded text-[var(--t4)] hover:text-[var(--t1)] hover:bg-white/10 transition-colors mono text-[14px]"
+              className="w-8 h-8 text-[var(--t4)] hover:text-[var(--t1)] hover:bg-white/10 mono text-[14px]"
             >
               ✕
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -371,24 +375,28 @@ export function FocusedChart({ index, data: initialData, initialRangeKey = '5d',
                 <span className="mono text-[8px] text-amber-400/80 tracking-wider">
                   ANCHOR: {fmtPrice(anchorPrice, index.unit)}
                 </span>
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={clearAnchor}
-                  className="mono text-[8px] text-[var(--t4)] hover:text-[var(--danger)] transition-colors px-1"
+                  className="mono text-[8px] h-auto px-1 py-0 text-[var(--t4)] hover:text-[var(--danger)]"
                 >
                   ✕ CLEAR
-                </button>
+                </Button>
               </div>
             )}
-            <button
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => setAnchorMode(v => !v)}
-              className={`mono text-[8px] font-bold px-2 py-1 tracking-wider transition-colors ${
+              className={`mono text-[8px] h-auto font-bold px-2 py-1 tracking-wider ${
                 anchorMode
-                  ? 'text-amber-300 bg-amber-400/15 border border-amber-400/40'
-                  : 'text-[var(--t4)] border border-[var(--bd)] hover:text-[var(--t2)] hover:border-white/20'
+                  ? 'text-amber-300 bg-amber-400/15 border-amber-400/40'
+                  : 'text-[var(--t4)] border-[var(--bd)] hover:text-[var(--t2)] hover:border-white/20'
               }`}
             >
               {anchorMode ? '⊕ CLICK CHART TO ANCHOR' : '⊕ SET ANCHOR'}
-            </button>
+            </Button>
           </div>
         </div>
 

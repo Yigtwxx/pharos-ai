@@ -7,6 +7,7 @@ import { useConflictDay } from '@/hooks/use-conflict-day';
 import { useIsMobile } from '@/hooks/use-is-mobile';
 import { useIsLandscapePhone } from '@/hooks/use-is-landscape-phone';
 import { useLandscapeScrollEmitter } from '@/hooks/use-landscape-scroll-emitter';
+import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { XPost } from '@/types/domain';
 import { useXPosts } from '@/api/x-posts';
@@ -126,16 +127,18 @@ export function SignalsContent() {
 
         {/* Compact filter bar */}
         <div className={`shrink-0 flex items-center gap-2 border-b border-[var(--bd)] bg-[var(--bg-2)] ${usePageScroll ? 'py-1.5 safe-px' : 'px-3 py-[6px]'}`}>
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => setFiltersOpen(p => !p)}
-            className={`text-[10px] px-[10px] py-[4px] border font-semibold tracking-wide transition-colors mono ${
+            className={`text-[10px] h-auto px-2.5 py-1 font-semibold tracking-wide transition-colors mono ${
               filtersOpen
                 ? 'border-[var(--blue)] bg-[var(--blue-dim)] text-[var(--blue-l)]'
                 : 'border-[var(--bd)] bg-[var(--bg-3)] text-[var(--t3)]'
             }`}
           >
             FILTERS
-          </button>
+          </Button>
           <span className="mono text-[9px] text-[var(--t4)]">{filtered.length} / {allPosts?.length ?? 0} signals</span>
           <span className="mono text-[9px] text-[var(--t4)]">·</span>
           <span className="mono text-[9px] text-[var(--t3)]">{showAll ? 'ALL DAYS' : currentDay}</span>
