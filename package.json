@@ -1,8 +1,15 @@
 {
-  "name": "pharos-ai-nextjs",
+  "name": "pharos-ai",
   "version": "0.1.0",
   "license": "AGPL-3.0-only",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Juliusolsson05/pharos-ai.git"
+  },
+  "homepage": "https://conflicts.app",
+  "bugs": "https://github.com/Juliusolsson05/pharos-ai/issues",
+  "author": "Julius Olsson",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

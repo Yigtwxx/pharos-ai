@@ -13,7 +13,7 @@ import { ReduxProvider } from '@/shared/state/redux-provider';
 import './globals.css';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.conflicts.today'),
+  metadataBase: new URL('https://www.conflicts.app'),
   applicationName: 'Conflicts.app',
   title: {
     default: 'Conflicts.app - Live Geopolitical Intelligence Dashboard',
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   description: 'Pharos is a live geopolitical intelligence dashboard for conflict tracking across events, actors, signals, briefs, and map-based analysis.',
   openGraph: {
     type: 'website',
-    url: 'https://www.conflicts.today',
+    url: 'https://www.conflicts.app',
     siteName: 'Conflicts.app',
     title: 'Conflicts.app - Live Geopolitical Intelligence Dashboard',
     description: 'Pharos is a live geopolitical intelligence dashboard for conflict tracking across events, actors, signals, briefs, and map-based analysis.',
