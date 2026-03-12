@@ -147,11 +147,8 @@
     :root {
       --app-height: 100dvh;
       --app-height-mobile: 100dvh;
+      --app-shell-height: 100dvh;
     }
-  }
-
-  @media (pointer: coarse) {
-    :root { --app-shell-height: var(--app-height-mobile); }
   }
 
   body {
